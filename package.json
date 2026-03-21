@@ -9,12 +9,14 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@prisma/adapter-pg": "^7.5.0",
     "@prisma/client": "^7.5.0",
     "axios": "^1.13.6",
     "bcryptjs": "^3.0.3",
     "jsonwebtoken": "^9.0.3",
     "next": "16.2.1",
-    "prisma": "^6.19.2",
+    "pg": "^8.20.0",
+    "prisma": "^7.5.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "uuid": "^13.0.0",
