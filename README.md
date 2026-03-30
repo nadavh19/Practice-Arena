@@ -28,6 +28,12 @@ Required `.env` values:
 1. `DATABASE_URL`
 2. `JWT_SECRET`
 
+`JWT_SECRET` note:
+
+1. `JWT_SECRET` is one app-level secret string (server-only).
+2. A JWT token is created per user auth action (`signup` / `login`) using that secret.
+3. If `JWT_SECRET` is missing, auth routes cannot issue valid tokens.
+
 Useful commands:
 
 ```bash
@@ -36,6 +42,15 @@ npm run build
 npx prisma generate
 npx prisma studio --port 5555 --browser none
 ```
+
+## Deployment Environment (Vercel)
+
+Set these in Vercel Project Settings -> Environment Variables:
+
+1. `DATABASE_URL`
+2. `JWT_SECRET`
+
+Apply to both `Preview` and `Production` (and `Development` if needed).
 
 ## Current API Flow
 
@@ -46,6 +61,10 @@ Creates user and returns JWT token.
 
 2. `POST /api/auth/login`
 Validates credentials and returns JWT token.
+
+Use returned token in protected routes:
+
+`Authorization: Bearer <token>`
 
 ### 2) Profile (Protected)
 
@@ -62,6 +81,11 @@ Builds a practice plan from user level + available time and saves it.
 
 2. `POST /api/session/complete`
 Marks selected tasks as completed and stores feedback ratings.
+
+### 4) Utility
+
+1. `GET /api/test`
+Simple DB connectivity check.
 
 ## Project Architecture (Simple)
 
