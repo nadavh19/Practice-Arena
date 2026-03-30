@@ -1,175 +1,193 @@
 # Practice Arena
 
-A simple Next.js + Prisma backend project for generating music practice sessions.
+Practice Arena is a Next.js + Prisma backend for a personalized music practice flow:
 
-## What We Have So Far
+1. Signup / login
+2. Update profile
+3. Generate a practice session
+4. Complete the session with feedback
 
-The project currently has:
-
-1. A working Prisma schema and migrations
-2. Seeded `Task` data
-3. Validation schemas for API input
-4. One basic test API route (`/api/test`)
-
-This is the current foundation before full auth/session MVP routes are added.
-
-## Project Commands
+## Quick Start
 
 ```bash
-# Run app
-npm run dev
+# Install
+npm install
 
-# Lint
-npm run lint
-
-# Generate Prisma client
-npx prisma generate
-
-# Apply migrations in development
+# Run migrations
 npx prisma migrate dev
 
 # Seed tasks
 npm run prisma:seed
 
-# Open Prisma Studio
+# Start app
+npm run dev
+```
+
+Required `.env` values:
+
+1. `DATABASE_URL`
+2. `JWT_SECRET`
+
+Useful commands:
+
+```bash
+npm run lint
+npm run build
+npx prisma generate
 npx prisma studio --port 5555 --browser none
 ```
 
-Then open:
+## Current API Flow
 
-`http://localhost:3000` for the app  
-`http://localhost:5555` for Prisma Studio
+### 1) Auth
 
-## File-By-File Explanation
+1. `POST /api/auth/signup`
+Creates user and returns JWT token.
 
-### `prisma/schema.prisma`
+2. `POST /api/auth/login`
+Validates credentials and returns JWT token.
 
-This is the **database blueprint**.
+### 2) Profile (Protected)
 
-It defines:
+1. `GET /api/profile`
+Returns current user profile.
 
-1. Tables (models): `User`, `Session`, `Task`, `SessionTask`, `Feedback`
-2. Fields in each table
-3. Relations between tables
+2. `POST /api/profile`
+Updates profile fields (`nickname`, `instrument`, `level`, `goals`).
 
-Simple relation view:
+### 3) Session (Protected)
 
-1. `User` has many `Session`s
-2. `Session` belongs to one `User`
-3. `Session` has many tasks through `SessionTask`
-4. `Feedback` belongs to one `Session`
+1. `POST /api/session/generate`
+Builds a practice plan from user level + available time and saves it.
 
-Prisma reads this file to know what DB structure should exist and what types/client to generate.
+2. `POST /api/session/complete`
+Marks selected tasks as completed and stores feedback ratings.
 
-### `prisma/migrations/.../migration.sql`
+## Project Architecture (Simple)
 
-These are the **actual SQL changes** applied to your database over time.
+1. **Routes** (`app/api/.../route.ts`)
+Handle HTTP only: parse request, validate, call service, return response.
 
-1. `20260321185438_init/migration.sql`
-Initial schema creation.
+2. **Services** (`services/*.service.ts`)
+Contain business logic and DB orchestration.
 
-2. `20260330145127_add_session_goal/migration.sql`
-Adds:
-- `Session.goal`
-- `Task.createdAt`
+3. **Algorithms** (`algorithms/*.ts`)
+Pure logic for generating sessions (difficulty, time blocks, task selection).
 
-Think of migrations as the history of DB changes.
+4. **Lib** (`lib/*.ts`)
+Shared helpers: DB client, auth, validators, API response formatting.
 
-### `prisma/migrations/migration_lock.toml`
+5. **Prisma** (`prisma/*`)
+Schema, migrations, seed data.
 
-Internal Prisma metadata file for migration consistency.
+## File Responsibilities
 
-You normally do not edit this manually.
+### Prisma Layer
 
-### `prisma.config.ts`
+1. `prisma/schema.prisma`
+Database structure (User, Session, Task, SessionTask, Feedback).
 
-This tells Prisma:
+2. `prisma/migrations/*/migration.sql`
+SQL history of DB changes.
 
-1. Where your schema file is (`prisma/schema.prisma`)
-2. How to read DB URL (`DATABASE_URL`)
-3. Which seed command to run (`npm run prisma:seed`)
+3. `prisma/seed.ts`
+Seeds `Task` rows for realistic session generation.
 
-### `lib/prisma.ts`
+4. `prisma.config.ts`
+Prisma config (schema path, datasource URL, seed command).
 
-This is your **database connection helper**.
+### Shared Lib Layer
 
-It:
+1. `lib/prisma.ts`
+Creates and exports shared Prisma client.
 
-1. Reads `DATABASE_URL`
-2. Creates Prisma client with Postgres adapter
-3. Exports one shared `prisma` instance
-4. Reuses the instance in development to avoid creating too many connections during hot reload
+2. `lib/validators.ts`
+Zod schemas for all API payloads.
 
-All services/routes should import this `prisma` object for DB queries.
+3. `lib/auth.ts`
+JWT helpers:
+- `createToken`
+- `verifyToken`
+- `getUserFromRequest`
 
-### `prisma/seed.ts`
+4. `lib/api-response.ts`
+Unified API response envelope:
+- success: `{ success: true, data }`
+- error: `{ success: false, error }`
 
-This file fills the DB with starter tasks.
+### Services Layer
 
-It:
+1. `services/user.service.ts`
+User business logic:
+- create user (hash password)
+- get user by email/id
+- update profile
+- return safe user shape (no password)
 
-1. Loads env variables
-2. Connects through `prisma`
-3. Clears existing tasks (`deleteMany`)
-4. Inserts a fixed task list (`createMany`)
-5. Disconnects cleanly
+2. `services/session.service.ts`
+Session business logic:
+- generate + save session/tasks
+- complete session
+- upsert feedback
+- enforce ownership checks
 
-Use this whenever you want a clean task dataset for testing.
+### Algorithm Layer
 
-### `lib/validators.ts`
+1. `algorithms/computeDifficulty.ts`
+Maps user level to difficulty.
 
-This is the **input safety layer** using Zod.
+2. `algorithms/splitTimeBlocks.ts`
+Splits available time into 5-minute blocks.
 
-It validates request bodies before business logic runs.
+3. `algorithms/selectTasks.ts`
+Selects tasks by difficulty, tries category variation.
 
-Schemas currently included:
+4. `algorithms/generatePracticeSession.ts`
+Orchestrates all algorithm steps into a session plan.
 
-1. `signupSchema`
-2. `loginSchema`
-3. `profileUpdateSchema`
-4. `generateSessionSchema`
-5. `completeSessionSchema`
+### API Route Layer
 
-Why it matters:
+1. `app/api/auth/signup/route.ts`
+Signup endpoint.
 
-1. Prevents bad input from reaching the DB
-2. Makes route handlers cleaner
-3. Gives typed inputs via exported TypeScript types
+2. `app/api/auth/login/route.ts`
+Login endpoint.
 
-## Mental Model
+3. `app/api/profile/route.ts`
+Protected profile get/update endpoint.
 
-Use this quick map:
+4. `app/api/session/generate/route.ts`
+Protected session generation endpoint.
 
-1. `schema.prisma` = what the DB should look like
-2. `migration.sql` files = how DB changed over time
-3. `lib/prisma.ts` = how code connects to DB
-4. `prisma/seed.ts` = sample data loader
-5. `lib/validators.ts` = request data checker
+5. `app/api/session/complete/route.ts`
+Protected session completion endpoint.
 
-## Current MVP Status
+6. `app/api/test/route.ts`
+Simple DB connectivity test endpoint.
 
-Working now:
+## User Model Notes
 
-1. Prisma schema + migrations
-2. Prisma generate/build/lint flow
-3. Task seeding
-4. Input validators
+Current `User` key fields:
 
-Not built yet:
+1. `email`
+2. `password` (hashed)
+3. `nickname` (optional, set after signup)
+4. `instrument`
+5. `level`
+6. `goals`
 
-1. Auth helper + auth routes
-2. User service
-3. Profile route (protected)
-4. Session algorithms/service/routes
+`nickname` is not unique and can be cleared (`null`) through profile update.
 
-## Next Recommended Build Order
+## How Data Moves in a Request
 
-1. `lib/auth.ts`
-2. `services/user.service.ts`
-3. `app/api/auth/signup/route.ts`
-4. `app/api/auth/login/route.ts`
-5. `app/api/profile/route.ts`
-6. `algorithms/*`
-7. `services/session.service.ts`
-8. `app/api/session/generate/route.ts`
-9. `app/api/session/complete/route.ts`
+Example: `POST /api/session/generate`
+
+1. Route receives request + bearer token.
+2. Route validates body with Zod.
+3. Route calls session service.
+4. Service loads user/tasks from DB.
+5. Service runs algorithm files.
+6. Service writes Session + SessionTask to DB.
+7. Route returns unified success response.
+
+That same pattern is used across the backend.

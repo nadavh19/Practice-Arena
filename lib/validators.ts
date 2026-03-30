@@ -20,12 +20,14 @@ export const loginSchema = z.object({
 
 export const profileUpdateSchema = z
   .object({
+    nickname: z.string().trim().min(2).max(40).nullable().optional(),
     instrument: z.string().trim().min(1).max(100).optional(),
     level: levelSchema.optional(),
     goals: z.string().trim().min(1).max(1000).optional(),
   })
   .refine(
     (payload) =>
+      payload.nickname !== undefined ||
       payload.instrument !== undefined ||
       payload.level !== undefined ||
       payload.goals !== undefined,
