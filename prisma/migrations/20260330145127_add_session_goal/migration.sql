@@ -1,0 +1,5 @@
+-- AlterTable
+ALTER TABLE "Session" ADD COLUMN     "goal" TEXT;
+
+-- AlterTable
+ALTER TABLE "Task" ADD COLUMN     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;

@@ -24,6 +24,7 @@ model Session {
   userId        String
   mood          String
   availableTime Int
+  goal          String?
   createdAt     DateTime      @default(now())
 
   user          User          @relation(fields: [userId], references: [id])
@@ -37,6 +38,7 @@ model Task {
   difficulty   String
   duration     Int
   category     String
+  createdAt    DateTime      @default(now())
 
   sessionTasks SessionTask[]
 }
