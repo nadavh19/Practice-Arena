@@ -1,6 +1,13 @@
 import { z } from "zod";
 
 const levelSchema = z.enum(["beginner", "intermediate", "advanced"]);
+const guitarOnlySchema = z
+  .string()
+  .trim()
+  .toLowerCase()
+  .refine((value) => value === "guitar", {
+    message: "Only guitar is currently supported",
+  });
 
 const baseEmailSchema = z.email().toLowerCase();
 const basePasswordSchema = z.string().min(8).max(100);
@@ -8,7 +15,7 @@ const basePasswordSchema = z.string().min(8).max(100);
 export const signupSchema = z.object({
   email: baseEmailSchema,
   password: basePasswordSchema,
-  instrument: z.string().trim().min(1).max(100),
+  instrument: guitarOnlySchema,
   level: levelSchema,
   goals: z.string().trim().min(1).max(1000),
 });
@@ -21,7 +28,7 @@ export const loginSchema = z.object({
 export const profileUpdateSchema = z
   .object({
     nickname: z.string().trim().min(2).max(40).nullable().optional(),
-    instrument: z.string().trim().min(1).max(100).optional(),
+    instrument: guitarOnlySchema.optional(),
     level: levelSchema.optional(),
     goals: z.string().trim().min(1).max(1000).optional(),
   })

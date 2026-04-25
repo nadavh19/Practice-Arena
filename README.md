@@ -7,6 +7,12 @@ Practice Arena is a Next.js + Prisma backend for a personalized music practice f
 3. Generate a practice session
 4. Complete the session with feedback
 
+
+## Tasks
+
+implement phase 3 - check about if i should do cookies or not
+
+
 ## Quick Start
 
 ```bash
@@ -73,6 +79,7 @@ Returns current user profile.
 
 2. `POST /api/profile`
 Updates profile fields (`nickname`, `instrument`, `level`, `goals`).
+`instrument` is currently locked to `guitar`.
 
 ### 3) Session (Protected)
 
@@ -196,7 +203,7 @@ Current `User` key fields:
 1. `email`
 2. `password` (hashed)
 3. `nickname` (optional, set after signup)
-4. `instrument`
+4. `instrument` (currently always `guitar`)
 5. `level`
 6. `goals`
 

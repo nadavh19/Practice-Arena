@@ -1,6 +1,7 @@
 import bcrypt from "bcryptjs";
 import { apiError, apiSuccess } from "@/lib/api-response";
 import { createToken } from "@/lib/auth";
+import { getValidationErrorMessage } from "@/lib/validation-error";
 import { loginSchema } from "@/lib/validators";
 import { getUserByEmail, getUserById } from "@/services/user.service";
 
@@ -15,7 +16,7 @@ export async function POST(request: Request) {
 
   const parsed = loginSchema.safeParse(body);
   if (!parsed.success) {
-    return apiError(400, { code: "VALIDATION_ERROR", message: parsed.error.message });
+    return apiError(400, { code: "VALIDATION_ERROR", message: getValidationErrorMessage(parsed.error) });
   }
 
   const userWithPassword = await getUserByEmail(parsed.data.email);

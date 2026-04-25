@@ -1,5 +1,6 @@
 import { apiError, apiSuccess } from "@/lib/api-response";
 import { createToken } from "@/lib/auth";
+import { getValidationErrorMessage } from "@/lib/validation-error";
 import { signupSchema } from "@/lib/validators";
 import { createUser } from "@/services/user.service";
 
@@ -14,7 +15,7 @@ export async function POST(request: Request) {
 
   const parsed = signupSchema.safeParse(body);
   if (!parsed.success) {
-    return apiError(400, { code: "VALIDATION_ERROR", message: parsed.error.message });
+    return apiError(400, { code: "VALIDATION_ERROR", message: getValidationErrorMessage(parsed.error) });
   }
 
   const user = await createUser(parsed.data);

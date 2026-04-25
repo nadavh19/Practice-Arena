@@ -124,3 +124,74 @@ export async function completeSession(userId: string, input: CompleteSessionInpu
     completedTaskIds: idsToMarkCompleted,
   };
 }
+
+export async function getSessionHistory(userId: string) {
+  return prisma.session.findMany({
+    where: { userId },
+    orderBy: { createdAt: "desc" },
+    include: {
+      tasks: {
+        select: {
+          taskId: true,
+          completed: true,
+          task: {
+            select: {
+              id: true,
+              name: true,
+              difficulty: true,
+              duration: true,
+              category: true,
+            },
+          },
+        },
+      },
+      feedback: {
+        select: {
+          difficultyRating: true,
+          focusRating: true,
+        },
+      },
+    },
+  });
+}
+
+export async function getSessionStats(userId: string) {
+  const [sessionCount, feedbackAggregate, totalTasks, completedTasks] = await Promise.all([
+    prisma.session.count({
+      where: { userId },
+    }),
+    prisma.feedback.aggregate({
+      where: {
+        session: {
+          userId,
+        },
+      },
+      _avg: {
+        focusRating: true,
+        difficultyRating: true,
+      },
+    }),
+    prisma.sessionTask.count({
+      where: {
+        session: {
+          userId,
+        },
+      },
+    }),
+    prisma.sessionTask.count({
+      where: {
+        session: {
+          userId,
+        },
+        completed: true,
+      },
+    }),
+  ]);
+
+  return {
+    sessionCount,
+    avgFocusRating: feedbackAggregate._avg.focusRating ?? 0,
+    avgDifficultyRating: feedbackAggregate._avg.difficultyRating ?? 0,
+    completionRate: totalTasks === 0 ? 0 : completedTasks / totalTasks,
+  };
+}

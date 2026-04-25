@@ -1,5 +1,6 @@
 import { apiError, apiSuccess } from "@/lib/api-response";
 import { getUserFromRequest } from "@/lib/auth";
+import { getValidationErrorMessage } from "@/lib/validation-error";
 import { profileUpdateSchema } from "@/lib/validators";
 import { getUserById, updateUserProfile } from "@/services/user.service";
 
@@ -32,7 +33,7 @@ export async function POST(request: Request) {
 
   const parsed = profileUpdateSchema.safeParse(body);
   if (!parsed.success) {
-    return apiError(400, { code: "VALIDATION_ERROR", message: parsed.error.message });
+    return apiError(400, { code: "VALIDATION_ERROR", message: getValidationErrorMessage(parsed.error) });
   }
 
   try {

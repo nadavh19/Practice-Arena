@@ -31,7 +31,7 @@ export async function createUser(input: SignupInput) {
       email: input.email,
       password: hashedPassword,
       nickname: null,
-      instrument: input.instrument,
+      instrument: "guitar",
       level: input.level,
       goals: input.goals,
     },
@@ -57,7 +57,7 @@ export async function updateUserProfile(userId: string, updates: ProfileUpdateIn
     where: { id: userId },
     data: {
       nickname: updates.nickname,
-      instrument: updates.instrument,
+      instrument: updates.instrument ? "guitar" : undefined,
       level: updates.level,
       goals: updates.goals,
     },
