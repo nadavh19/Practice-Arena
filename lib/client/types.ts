@@ -27,12 +27,31 @@ export type UserProfile = {
   createdAt: string;
 };
 
+export type TaskCategory =
+  | "exercise"
+  | "scale"
+  | "chord"
+  | "song_chords"
+  | "riff"
+  | "solo"
+  | "rhythm"
+  | "technique";
+
 export type PracticeTask = {
   id: string;
   name: string;
   difficulty: string;
   duration: number;
-  category: string;
+  category: TaskCategory;
+  description: string | null;
+  instrument: string | null;
+  key: string | null;
+  bpm: number | null;
+  tab: string | null;
+  chords: string | null;
+  scale: string | null;
+  songName: string | null;
+  artistName: string | null;
 };
 
 export type SessionTaskItem = {
