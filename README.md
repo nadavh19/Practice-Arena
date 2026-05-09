@@ -7,6 +7,13 @@ Practice Arena is a Next.js + Prisma backend for a personalized music practice f
 3. Generate a practice session
 4. Complete the session with feedback
 
+## Onboarding (Read First)
+
+Start here before editing code:
+
+1. `docs/architecture-routing.md` - UI vs API boundaries, route ownership matrix, and debug entry points.
+2. `README.md` (this file) - setup, API overview, and implementation notes.
+3. `docs/schema.md` - data model and entity relationships.
 
 ## Tasks
 

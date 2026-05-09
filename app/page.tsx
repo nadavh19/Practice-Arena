@@ -2,6 +2,8 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { InlineStatus } from "@/app/components/ui/inline-status";
+import { PageShell } from "@/app/components/ui/page-shell";
 import { apiGet } from "@/lib/client/api-client";
 import { getToken } from "@/lib/client/auth-storage";
 import type { UserProfile } from "@/lib/client/types";
@@ -23,19 +25,15 @@ export default function HomePage() {
         return;
       }
 
-      if (profileResult.data.nickname) {
-        router.replace("/session/new");
-      } else {
-        router.replace("/profile");
-      }
+      router.replace(profileResult.data.nickname ? "/session/new" : "/profile");
     }
 
     void routeUser();
   }, [router]);
 
   return (
-    <main className="mx-auto flex min-h-screen w-full max-w-2xl items-center justify-center px-6 py-10">
-      <p className="text-sm text-zinc-600">Redirecting...</p>
-    </main>
+    <PageShell as="main" width="2xl" fullHeight className="flex items-center justify-center px-6 py-10">
+      <InlineStatus message="Redirecting..." variant="muted" />
+    </PageShell>
   );
 }

@@ -2,11 +2,24 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useMemo, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
+import { InlineStatus } from "@/app/components/ui/inline-status";
+import { PageShell } from "@/app/components/ui/page-shell";
 import { clearToken, getToken } from "@/lib/client/auth-storage";
 import { clearCurrentSessionId } from "@/lib/client/session-storage";
 
-export function ProtectedShell({ children }: { children: ReactNode }) {
+type ProtectedShellProps = {
+  children: ReactNode;
+};
+
+const links = [
+  { href: "/profile", label: "Profile" },
+  { href: "/session/new", label: "New Session" },
+  { href: "/session/current", label: "Current Session" },
+  { href: "/history", label: "History" },
+];
+
+export function ProtectedShell({ children }: ProtectedShellProps) {
   const router = useRouter();
   const pathname = usePathname();
   const token = getToken();
@@ -17,21 +30,11 @@ export function ProtectedShell({ children }: { children: ReactNode }) {
     }
   }, [router, token]);
 
-  const links = useMemo(
-    () => [
-      { href: "/profile", label: "Profile" },
-      { href: "/session/new", label: "New Session" },
-      { href: "/session/current", label: "Current Session" },
-      { href: "/history", label: "History" },
-    ],
-    [],
-  );
-
   if (!token) {
     return (
-      <main className="mx-auto flex min-h-screen w-full max-w-3xl items-center justify-center px-6 py-10">
-        <p className="text-sm text-zinc-600">Checking access...</p>
-      </main>
+      <PageShell as="main" width="5xl" fullHeight className="flex items-center justify-center px-6 py-10">
+        <InlineStatus message="Checking access..." variant="muted" />
+      </PageShell>
     );
   }
 
