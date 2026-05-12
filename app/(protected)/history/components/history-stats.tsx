@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { SurfaceCard } from "@/app/components/ui/surface-card";
 import type { SessionStats } from "@/lib/client/types";
 
@@ -14,11 +15,16 @@ export function HistoryStats({ stats }: HistoryStatsProps) {
   ];
 
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-      {items.map((item) => (
-        <SurfaceCard as="article" key={item.label} className="p-4">
-          <p className="text-xs uppercase tracking-wide text-zinc-500">{item.label}</p>
-          <p className="mt-2 text-2xl font-semibold text-zinc-900">{item.value}</p>
+    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
+      {items.map((item, index) => (
+        <SurfaceCard
+          as="article"
+          key={item.label}
+          className="practice-task-reveal p-5"
+          style={{ "--task-index": index } as CSSProperties}
+        >
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">{item.label}</p>
+          <p className="mt-3 font-mono text-3xl font-semibold tracking-tight text-zinc-950">{item.value}</p>
         </SurfaceCard>
       ))}
     </div>

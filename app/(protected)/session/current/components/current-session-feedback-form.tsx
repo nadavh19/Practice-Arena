@@ -25,12 +25,12 @@ export function CurrentSessionFeedbackForm({
   submitting,
 }: CurrentSessionFeedbackFormProps) {
   return (
-    <SurfaceCard>
+    <SurfaceCard className="rounded-[2rem]">
       <form onSubmit={onSubmit}>
         <PageHeading title="Session feedback" description="Rate difficulty and focus from 1 to 5." />
 
-        <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <FormField label="Difficulty rating">
+        <div className="mt-6 grid gap-5 sm:grid-cols-2">
+          <FormField label="Difficulty rating" helperText="1 felt easy, 5 felt heavy.">
             <input
               type="number"
               min={1}
@@ -40,7 +40,7 @@ export function CurrentSessionFeedbackForm({
               className={fieldControlClassName}
             />
           </FormField>
-          <FormField label="Focus rating">
+          <FormField label="Focus rating" helperText="1 felt distracted, 5 felt locked in.">
             <input
               type="number"
               min={1}
@@ -52,7 +52,7 @@ export function CurrentSessionFeedbackForm({
           </FormField>
         </div>
 
-        <AppButton disabled={submitting} type="submit" className="mt-5">
+        <AppButton disabled={submitting} type="submit" className="mt-6">
           {submitting ? "Submitting..." : "Submit feedback and finish"}
         </AppButton>
 

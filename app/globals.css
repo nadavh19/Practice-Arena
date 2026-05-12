@@ -14,13 +14,46 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #f9fafb;
+    --foreground: #18181b;
   }
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: #d1fae5;
+  color: #064e3b;
+}
+
+@keyframes taskFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.practice-task-reveal {
+  animation: taskFadeIn 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation-delay: calc(var(--task-index, 0) * 70ms);
+}
+
+.page-section-reveal {
+  animation: taskFadeIn 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .practice-task-reveal,
+  .page-section-reveal {
+    animation: none;
+  }
 }

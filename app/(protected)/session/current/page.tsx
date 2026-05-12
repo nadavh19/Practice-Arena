@@ -26,7 +26,7 @@ export default function CurrentSessionPage() {
 
   if (loading) {
     return (
-      <PageShell>
+      <PageShell width="7xl">
         <InlineStatus message="Loading current session..." variant="muted" />
       </PageShell>
     );
@@ -34,14 +34,14 @@ export default function CurrentSessionPage() {
 
   if (!session) {
     return (
-      <PageShell>
+      <PageShell width="7xl">
         <CurrentSessionEmptyState error={error} />
       </PageShell>
     );
   }
 
   return (
-    <PageShell className="space-y-6">
+    <PageShell width="7xl" className="page-section-reveal space-y-8">
       <CurrentSessionSummary session={session} />
       <CurrentSessionTasks
         onToggleTask={toggleTask}

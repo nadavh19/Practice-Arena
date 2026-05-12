@@ -20,8 +20,8 @@ export function LoginForm({
   submitting,
 }: LoginFormProps) {
   return (
-    <form className="mt-5 space-y-3" onSubmit={onSubmit}>
-      <FormField label="Email">
+    <form className="mt-6 space-y-4" onSubmit={onSubmit}>
+      <FormField label="Email" helperText="Use the email you registered with.">
         <input
           required
           type="email"
@@ -30,7 +30,7 @@ export function LoginForm({
           className={fieldControlClassName}
         />
       </FormField>
-      <FormField label="Password">
+      <FormField label="Password" helperText="Minimum 8 characters.">
         <input
           required
           minLength={8}
@@ -42,7 +42,7 @@ export function LoginForm({
         />
       </FormField>
       <AppButton disabled={submitting} type="submit" fullWidth>
-        {submitting ? "Logging in..." : "Login"}
+        {submitting ? "Logging in..." : "Log in"}
       </AppButton>
     </form>
   );

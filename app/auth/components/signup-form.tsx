@@ -31,8 +31,8 @@ export function SignupForm({
   submitting,
 }: SignupFormProps) {
   return (
-    <form className="mt-5 space-y-3" onSubmit={onSubmit}>
-      <FormField label="Email">
+    <form className="mt-6 space-y-4" onSubmit={onSubmit}>
+      <FormField label="Email" helperText="This becomes your account login.">
         <input
           required
           type="email"
@@ -41,7 +41,7 @@ export function SignupForm({
           className={fieldControlClassName}
         />
       </FormField>
-      <FormField label="Password">
+      <FormField label="Password" helperText="Use at least 8 characters.">
         <input
           required
           minLength={8}
@@ -53,10 +53,10 @@ export function SignupForm({
         />
       </FormField>
       <div className={readOnlyFieldClassName}>
-        <p className="text-xs text-zinc-500">Instrument</p>
-        <p className="text-sm font-medium text-zinc-900">Guitar</p>
+        <p className="text-xs font-medium uppercase tracking-[0.14em] text-slate-500">Instrument</p>
+        <p className="mt-1 text-sm font-semibold text-zinc-950">Guitar</p>
       </div>
-      <FormField label="Level">
+      <FormField label="Level" helperText="The generator uses this to pick task difficulty.">
         <select
           value={level}
           onChange={(event) => onLevelChange(event.target.value as UserLevel)}
@@ -69,7 +69,7 @@ export function SignupForm({
           ))}
         </select>
       </FormField>
-      <FormField label="Goals">
+      <FormField label="Goals" helperText="Name the skill, song, or habit you want to improve.">
         <textarea
           required
           value={goals}

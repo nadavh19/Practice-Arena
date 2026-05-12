@@ -15,7 +15,10 @@ export function SurfaceCard<T extends ElementType = "section">({
   className,
   ...props
 }: SurfaceCardProps<T>) {
-  const classes = ["rounded-xl border border-zinc-200 bg-white p-6 shadow-sm", className ?? ""]
+  const classes = [
+    "rounded-[1.75rem] border border-slate-200/60 bg-white p-6 shadow-[0_22px_55px_-42px_rgba(15,23,42,0.45)] sm:p-8",
+    className ?? "",
+  ]
     .filter(Boolean)
     .join(" ");
 

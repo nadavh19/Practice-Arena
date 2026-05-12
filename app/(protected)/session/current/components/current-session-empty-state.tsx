@@ -9,9 +9,9 @@ type CurrentSessionEmptyStateProps = {
 
 export function CurrentSessionEmptyState({ error }: CurrentSessionEmptyStateProps) {
   return (
-    <SurfaceCard>
+    <SurfaceCard className="page-section-reveal max-w-2xl">
       <InlineStatus message={error ?? "No current session found."} variant="info" />
-      <Link href="/session/new" className={`mt-4 inline-block ${getButtonClassName()}`}>
+      <Link href="/session/new" className={`mt-5 ${getButtonClassName()}`}>
         Generate session
       </Link>
     </SurfaceCard>

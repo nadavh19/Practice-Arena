@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import { TaskDetails } from "@/app/components/tasks/task-details";
 import type { SessionHistoryItem } from "@/lib/client/types";
 
@@ -25,23 +25,24 @@ export function HistoryListItem({ session }: HistoryListItemProps) {
   const completedCount = session.tasks.filter((task) => task.completed).length;
 
   return (
-    <li className="rounded-lg border border-zinc-200 p-4">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="text-sm font-semibold text-zinc-900 truncate">{formatSessionDate(session.createdAt)}</p>
-          <p className="text-xs text-zinc-600">
-            Mood: {session.mood} | Time: {session.availableTime} min
-          </p>
-          {session.goal ? <p className="mt-1 text-xs text-zinc-600">Goal: {session.goal}</p> : null}
+    <li className="rounded-[1.75rem] border border-slate-200/70 bg-white p-5 shadow-[0_18px_42px_-34px_rgba(15,23,42,0.35)] transition-[border-color,box-shadow] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-slate-300 hover:shadow-[0_24px_52px_-38px_rgba(15,23,42,0.42)] sm:p-6">
+      <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
+        <div className="min-w-0 space-y-2">
+          <p className="truncate font-mono text-xs text-slate-500">{formatSessionDate(session.createdAt)}</p>
+          <div>
+            <h3 className="text-lg font-semibold tracking-tight text-zinc-950">{session.mood} practice session</h3>
+            <p className="mt-1 text-sm text-slate-600">{session.availableTime} minutes planned</p>
+          </div>
+          {session.goal ? <p className="max-w-[65ch] text-sm leading-6 text-slate-700">Goal: {session.goal}</p> : null}
         </div>
-        <div className="flex items-center gap-3">
-          <p className="text-xs font-medium text-zinc-700">
+        <div className="flex flex-wrap items-center gap-3 md:justify-end">
+          <p className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700 ring-1 ring-slate-200/70">
             {completedCount}/{session.tasks.length} tasks completed
           </p>
           <button
             type="button"
             onClick={() => setOpen((value) => !value)}
-            className="rounded-md border border-zinc-200 bg-zinc-50 px-3 py-1.5 text-xs font-medium text-zinc-700 hover:bg-zinc-100"
+            className="rounded-full border border-slate-200 bg-white px-4 py-2 text-xs font-semibold text-slate-800 shadow-[0_10px_24px_-20px_rgba(15,23,42,0.45)] transition-[background-color,border-color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-slate-300 hover:bg-slate-50 active:scale-[0.98]"
             aria-expanded={open}
           >
             {open ? "Hide details" : "View details"}
@@ -50,17 +51,21 @@ export function HistoryListItem({ session }: HistoryListItemProps) {
       </div>
 
       {open ? (
-        <div className="mt-4 space-y-3">
+        <div className="mt-6 space-y-4 border-t border-slate-200/70 pt-5 animate-[taskFadeIn_320ms_cubic-bezier(0.16,1,0.3,1)_both]">
           {session.feedback ? (
-            <p className="text-xs text-zinc-700">
+            <p className="text-sm text-slate-700">
               Feedback: difficulty {session.feedback.difficultyRating}/5, focus {session.feedback.focusRating}/5
             </p>
           ) : (
-            <p className="text-xs text-zinc-500">No feedback submitted.</p>
+            <p className="text-sm text-slate-500">No feedback submitted.</p>
           )}
-          <ul className="space-y-3">
-            {session.tasks.map((item) => (
-              <li key={item.taskId}>
+          <ul className="space-y-4">
+            {session.tasks.map((item, index) => (
+              <li
+                key={item.taskId}
+                className="practice-task-reveal"
+                style={{ "--task-index": index } as CSSProperties}
+              >
                 <TaskDetails
                   task={item.task}
                   completionLabel={item.completed ? "Completed" : "Not completed"}

@@ -9,9 +9,9 @@ type HistoryListProps = {
 
 export function HistoryList({ history }: HistoryListProps) {
   return (
-    <SurfaceCard>
-      <PageHeading title="Session history" />
-      <ul className="mt-5 space-y-4">
+    <SurfaceCard className="rounded-[2rem]">
+      <PageHeading title="Session history" description="Open any session to revisit the full task list and feedback." />
+      <ul className="mt-7 space-y-4">
         {history.map((session) => (
           <HistoryListItem key={session.id} session={session} />
         ))}

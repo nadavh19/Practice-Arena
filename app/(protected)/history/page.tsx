@@ -13,7 +13,7 @@ export default function HistoryPage() {
 
   if (loading) {
     return (
-      <PageShell>
+      <PageShell width="7xl">
         <InlineStatus message="Loading history..." variant="muted" />
       </PageShell>
     );
@@ -21,7 +21,7 @@ export default function HistoryPage() {
 
   if (error) {
     return (
-      <PageShell>
+      <PageShell width="7xl">
         <SurfaceCard>
           <InlineStatus message={error} variant="error" />
         </SurfaceCard>
@@ -31,14 +31,14 @@ export default function HistoryPage() {
 
   if (history.length === 0 || !stats) {
     return (
-      <PageShell width="2xl">
+      <PageShell width="7xl">
         <HistoryEmptyState />
       </PageShell>
     );
   }
 
   return (
-    <PageShell className="space-y-6">
+    <PageShell width="7xl" className="page-section-reveal space-y-8">
       <HistoryStats stats={stats} />
       <HistoryList history={history} />
     </PageShell>

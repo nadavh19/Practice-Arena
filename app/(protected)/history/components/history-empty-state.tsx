@@ -5,9 +5,9 @@ import { SurfaceCard } from "@/app/components/ui/surface-card";
 
 export function HistoryEmptyState() {
   return (
-    <SurfaceCard>
+    <SurfaceCard className="page-section-reveal max-w-2xl">
       <PageHeading title="History" description="No sessions completed yet. Start your first session." />
-      <Link href="/session/new" className={`mt-4 inline-block ${getButtonClassName()}`}>
+      <Link href="/session/new" className={`mt-5 ${getButtonClassName()}`}>
         Create session
       </Link>
     </SurfaceCard>

@@ -10,14 +10,14 @@ export default function ProfilePage() {
 
   if (loading) {
     return (
-      <PageShell width="2xl">
+      <PageShell width="7xl">
         <InlineStatus message="Loading profile..." variant="muted" />
       </PageShell>
     );
   }
 
   return (
-    <PageShell width="2xl">
+    <PageShell width="7xl" className="page-section-reveal">
       <ProfileForm
         error={error}
         form={form}

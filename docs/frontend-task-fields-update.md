@@ -26,6 +26,11 @@ Optional fields are hidden when they are empty or `null`, so tasks do not show b
 - Descriptions, chords, and scales are shown in bordered white sections with dark text.
 - Tabs are shown in a dark monospace block with light text and horizontal scrolling.
 - The current-session checkbox row uses a light background and dark text to avoid same-color foreground/background issues.
+- The polished task UI uses a restrained zinc/slate palette with emerald reserved for status and completion.
+- Task cards now use softer diffusion shadows, asymmetric desktop grids, and a single-column mobile layout.
+- CSS-only motion adds staggered task entrance and tactile button/checkbox feedback using opacity and transform.
+- No third-party motion or icon dependency was added.
+- A broader UI refresh is documented in `docs/frontend-ui-refresh.md`.
 
 ## Verification
 

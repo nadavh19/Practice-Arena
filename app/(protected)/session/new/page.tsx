@@ -49,7 +49,7 @@ export default function NewSessionPage() {
   }
 
   return (
-    <PageShell width="2xl">
+    <PageShell width="7xl" className="page-section-reveal">
       <NewSessionForm
         availableTime={availableTime}
         error={error}

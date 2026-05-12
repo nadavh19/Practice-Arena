@@ -1,6 +1,6 @@
 import type { ComponentPropsWithoutRef, ElementType, ReactNode } from "react";
 
-type PageShellWidth = "md" | "lg" | "2xl" | "5xl";
+type PageShellWidth = "md" | "lg" | "2xl" | "5xl" | "7xl";
 
 type PageShellOwnProps = {
   as?: ElementType;
@@ -18,6 +18,7 @@ const widthClasses: Record<PageShellWidth, string> = {
   lg: "max-w-lg",
   "2xl": "max-w-2xl",
   "5xl": "max-w-5xl",
+  "7xl": "max-w-7xl",
 };
 
 export function PageShell<T extends ElementType = "section">({
@@ -29,9 +30,9 @@ export function PageShell<T extends ElementType = "section">({
   ...props
 }: PageShellProps<T>) {
   const classes = [
-    "mx-auto w-full px-4 py-8",
+    "mx-auto w-full px-4 py-8 sm:px-6 lg:px-8",
     widthClasses[width],
-    fullHeight ? "min-h-screen" : "",
+    fullHeight ? "min-h-[100dvh]" : "",
     className ?? "",
   ]
     .filter(Boolean)
