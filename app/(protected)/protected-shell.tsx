@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { InlineStatus } from "@/app/components/ui/inline-status";
 import { PageShell } from "@/app/components/ui/page-shell";
 import { clearToken, getToken } from "@/lib/client/auth-storage";
@@ -22,13 +22,24 @@ const links = [
 export function ProtectedShell({ children }: ProtectedShellProps) {
   const router = useRouter();
   const pathname = usePathname();
-  const token = getToken();
+  const [token, setToken] = useState<string | null | undefined>(undefined);
 
   useEffect(() => {
-    if (!token) {
+    const storedToken = getToken();
+    setToken(storedToken);
+
+    if (!storedToken) {
       router.replace("/auth");
     }
-  }, [router, token]);
+  }, [router]);
+
+  if (token === undefined) {
+    return (
+      <PageShell as="main" width="5xl" fullHeight className="flex items-center justify-center px-6 py-10">
+        <InlineStatus message="Checking access..." variant="muted" />
+      </PageShell>
+    );
+  }
 
   if (!token) {
     return (
