@@ -27,6 +27,16 @@ The app UI was refreshed across auth, profile, new session, current session, and
 - Focus rings and active press states are applied to primary controls.
 - Long task tabs remain horizontally scrollable in monospace blocks.
 
+## Background Assets
+
+The supplied music images were copied into `public/backgrounds/` with stable names and are used as full-page route backgrounds:
+
+- `warm-fretboard.png` is used on `/auth` and `/profile`.
+- `blue-equalizer-wave.png` is used on `/session/new` and `/history`.
+- `dark-guitar-glow.png` is used on `/session/current`, plus the current practice summary and completion footer.
+
+Each image is paired with a gradient overlay in `app/globals.css` so foreground text and form surfaces stay readable. To replace an image later, keep the same filename or update the matching CSS utility: `.auth-image-shell`, `.profile-page-background`, `.new-session-page-background`, `.current-session-page-background`, `.history-page-background`, or `.music-accent-panel`.
+
 ## Verification
 
 Run:

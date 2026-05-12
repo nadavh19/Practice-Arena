@@ -76,33 +76,38 @@ export default function AuthPage() {
   }
 
   return (
-    <PageShell as="main" width="7xl" fullHeight className="grid items-center gap-8 py-10 lg:grid-cols-[1.1fr_0.9fr] lg:py-16">
+    <PageShell
+      as="main"
+      width="7xl"
+      fullHeight
+      className="auth-image-shell grid items-center gap-8 py-10 lg:grid-cols-[1.1fr_0.9fr] lg:py-16"
+    >
       <section className="page-section-reveal max-w-2xl space-y-8 lg:pl-[6vw]">
         <div className="space-y-5">
-          <p className="w-fit rounded-full border border-emerald-200 bg-emerald-50 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-emerald-800">
+          <p className="w-fit rounded-full border border-emerald-300/35 bg-emerald-300/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-emerald-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.16)]">
             Practice Arena
           </p>
-          <h1 className="max-w-[10ch] text-5xl font-semibold leading-none tracking-tight text-zinc-950 md:text-6xl">
+          <h1 className="max-w-[10ch] text-5xl font-semibold leading-none tracking-tight text-white md:text-6xl">
             Build a better practice habit.
           </h1>
-          <p className="max-w-[58ch] text-base leading-7 text-slate-600">
+          <p className="max-w-[58ch] text-base leading-7 text-slate-200">
             Generate focused guitar sessions, track what you actually finished, and keep every exercise readable with
             tabs, chords, tempo, key, and song context.
           </p>
         </div>
         <div className="grid max-w-xl gap-3 sm:grid-cols-[1.1fr_0.9fr]">
-          <div className="rounded-[1.75rem] border border-slate-200/70 bg-white p-5 shadow-[0_20px_45px_-36px_rgba(15,23,42,0.45)]">
-            <p className="font-mono text-3xl font-semibold tracking-tight text-zinc-950">30</p>
-            <p className="mt-2 text-sm leading-6 text-slate-600">minutes can become a structured plan instead of a guess.</p>
+          <div className="rounded-[1.75rem] border border-white/15 bg-white/10 p-5 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.16)] backdrop-blur">
+            <p className="font-mono text-3xl font-semibold tracking-tight">30</p>
+            <p className="mt-2 text-sm leading-6 text-slate-200">minutes can become a structured plan instead of a guess.</p>
           </div>
-          <div className="rounded-[1.75rem] border border-slate-200/70 bg-slate-950 p-5 text-zinc-50 shadow-[0_24px_50px_-34px_rgba(15,23,42,0.7)]">
+          <div className="rounded-[1.75rem] border border-white/15 bg-slate-950/70 p-5 text-zinc-50 shadow-[0_24px_50px_-34px_rgba(15,23,42,0.7)] backdrop-blur">
             <p className="text-sm font-semibold tracking-tight">Focus loop</p>
             <p className="mt-2 text-sm leading-6 text-slate-300">Context, tasks, feedback, then sharper sessions.</p>
           </div>
         </div>
       </section>
 
-      <SurfaceCard className="page-section-reveal mx-auto w-full max-w-md p-5 sm:p-7">
+      <SurfaceCard className="page-section-reveal mx-auto w-full max-w-md border-white/70 bg-white/95 p-5 shadow-[0_28px_70px_-40px_rgba(2,6,23,0.8)] backdrop-blur sm:p-7">
         <PageHeading title={mode === "login" ? "Welcome back" : "Create your account"} description="Sign in or create an account to start a session." />
 
         <div className="mt-6 grid grid-cols-2 gap-1 rounded-full border border-slate-200 bg-slate-100 p-1">

@@ -73,13 +73,13 @@ export function NewSessionForm({
       </SurfaceCard>
 
       <aside className="space-y-4 lg:pt-12">
-        <div className="rounded-[1.75rem] border border-slate-200/70 bg-white p-6 shadow-[0_20px_50px_-42px_rgba(15,23,42,0.45)]">
+        <div className="rounded-[1.75rem] border border-slate-200/70 bg-white/90 p-6 shadow-[0_24px_58px_-42px_rgba(15,23,42,0.52)] backdrop-blur">
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">Preview</p>
-          <p className="mt-4 text-3xl font-semibold tracking-tight text-zinc-950">{availableTime || "0"} min</p>
+          <p className="mt-4 font-mono text-4xl font-semibold tracking-tight text-zinc-950">{availableTime || "0"} min</p>
           <p className="mt-2 text-sm leading-6 text-slate-600">
             {mood.trim() ? `Mood: ${mood}` : "Add a mood to tune the session."}
           </p>
-          <div className="mt-5 rounded-2xl bg-slate-50 p-4 text-sm leading-6 text-slate-700">
+          <div className="mt-5 rounded-2xl border border-slate-200/70 bg-slate-50 p-4 text-sm leading-6 text-slate-700">
             {goal.trim() || "Optional focus will appear here before the plan is generated."}
           </div>
         </div>

@@ -43,7 +43,12 @@ export function CurrentSessionTasks({
           );
         })}
       </ul>
-      <p className="mt-5 text-sm text-slate-600">{selectedCount} task(s) selected as completed.</p>
+      <div className="music-accent-panel mt-6 rounded-[1.5rem] border border-slate-800/70 p-5 shadow-[0_18px_42px_-34px_rgba(15,23,42,0.7)]">
+        <p className="text-sm font-semibold text-white">{selectedCount} task(s) selected as completed.</p>
+        <p className="mt-1 text-sm leading-6 text-slate-200">
+          Finish the pass, then send feedback so the next plan can adjust.
+        </p>
+      </div>
     </SurfaceCard>
   );
 }

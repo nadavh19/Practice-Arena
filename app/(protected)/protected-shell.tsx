@@ -19,6 +19,26 @@ const links = [
   { href: "/history", label: "History" },
 ];
 
+function getPageBackgroundClass(pathname: string) {
+  if (pathname === "/profile") {
+    return "profile-page-background";
+  }
+
+  if (pathname === "/session/new") {
+    return "new-session-page-background";
+  }
+
+  if (pathname === "/session/current") {
+    return "current-session-page-background";
+  }
+
+  if (pathname === "/history") {
+    return "history-page-background";
+  }
+
+  return "protected-image-shell";
+}
+
 function subscribeToTokenChanges(onStoreChange: () => void) {
   if (typeof window === "undefined") {
     return () => {};
@@ -47,8 +67,10 @@ export function ProtectedShell({ children }: ProtectedShellProps) {
     );
   }
 
+  const backgroundClassName = getPageBackgroundClass(pathname);
+
   return (
-    <div className="min-h-[100dvh] bg-[#f9fafb]">
+    <div className={`${backgroundClassName} min-h-[100dvh]`}>
       <header className="border-b border-slate-200/70 bg-white/85 backdrop-blur">
         <div className="mx-auto grid w-full max-w-7xl gap-4 px-4 py-4 sm:px-6 lg:grid-cols-[auto_1fr_auto] lg:items-center lg:px-8">
           <Link href="/session/new" className="group w-fit">

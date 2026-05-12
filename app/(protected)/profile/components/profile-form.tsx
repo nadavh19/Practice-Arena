@@ -32,15 +32,18 @@ export function ProfileForm({ error, form, onChange, onSubmit, saving, successMe
           title="Shape your practice profile"
           description="The generator uses these details to choose practice material that matches your current level and intent."
         />
-        <div className="rounded-[1.75rem] border border-slate-200/70 bg-slate-950 p-6 text-zinc-50 shadow-[0_24px_55px_-36px_rgba(15,23,42,0.75)]">
-          <p className="font-mono text-sm text-slate-400">Current setup</p>
-          <p className="mt-4 text-2xl font-semibold tracking-tight">{form.nickname || "Unnamed player"}</p>
+        <div className="rounded-[1.75rem] border border-slate-200/70 bg-white/90 p-6 shadow-[0_24px_55px_-40px_rgba(15,23,42,0.55)] backdrop-blur">
+          <p className="font-mono text-sm text-slate-500">Current setup</p>
+          <p className="mt-4 text-2xl font-semibold tracking-tight text-zinc-950">{form.nickname || "Unnamed player"}</p>
           <div className="mt-5 flex flex-wrap gap-2">
-            <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-slate-200">Guitar</span>
-            <span className="rounded-full bg-emerald-400/15 px-3 py-1 text-xs font-medium text-emerald-100">
+            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">Guitar</span>
+            <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800 ring-1 ring-emerald-200/70">
               {form.level}
             </span>
           </div>
+          <p className="mt-6 max-w-[32ch] text-sm leading-6 text-slate-600">
+            Your profile sets the tuning fork for every generated session.
+          </p>
         </div>
       </aside>
 
