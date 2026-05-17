@@ -1,5 +1,6 @@
 import type { FormEvent } from "react";
 import { AppButton } from "@/app/components/ui/app-button";
+import { AppSelect, type AppSelectOption } from "@/app/components/ui/app-select";
 import { FormField, fieldControlClassName, readOnlyFieldClassName } from "@/app/components/ui/form-field";
 import type { UserLevel } from "@/lib/client/types";
 
@@ -16,7 +17,11 @@ type SignupFormProps = {
   submitting: boolean;
 };
 
-const levels: UserLevel[] = ["beginner", "intermediate", "advanced"];
+const levelOptions: AppSelectOption<UserLevel>[] = [
+  { value: "beginner", label: "Beginner", description: "Foundations and clean timing" },
+  { value: "intermediate", label: "Intermediate", description: "Mixed drills and song work" },
+  { value: "advanced", label: "Advanced", description: "Advanced technique and lead work" },
+];
 
 export function SignupForm({
   email,
@@ -56,19 +61,13 @@ export function SignupForm({
         <p className="text-xs font-medium uppercase tracking-[0.14em] text-slate-500">Instrument</p>
         <p className="mt-1 text-sm font-semibold text-zinc-950">Guitar</p>
       </div>
-      <FormField label="Level" helperText="The generator uses this to pick task difficulty.">
-        <select
-          value={level}
-          onChange={(event) => onLevelChange(event.target.value as UserLevel)}
-          className={fieldControlClassName}
-        >
-          {levels.map((item) => (
-            <option key={item} value={item}>
-              {item}
-            </option>
-          ))}
-        </select>
-      </FormField>
+      <AppSelect
+        label="Level"
+        helperText="The generator uses this to pick task difficulty."
+        value={level}
+        options={levelOptions}
+        onChange={onLevelChange}
+      />
       <FormField label="Goals" helperText="Name the skill, song, or habit you want to improve.">
         <textarea
           required

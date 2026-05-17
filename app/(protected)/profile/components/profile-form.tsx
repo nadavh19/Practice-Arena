@@ -1,6 +1,7 @@
 import type { FormEvent } from "react";
 import Link from "next/link";
 import { AppButton, getButtonClassName } from "@/app/components/ui/app-button";
+import { AppSelect, type AppSelectOption } from "@/app/components/ui/app-select";
 import { FormField, fieldControlClassName, readOnlyFieldClassName } from "@/app/components/ui/form-field";
 import { InlineStatus } from "@/app/components/ui/inline-status";
 import { PageHeading } from "@/app/components/ui/page-heading";
@@ -22,7 +23,11 @@ type ProfileFormProps = {
   successMessage: string | null;
 };
 
-const levels: UserLevel[] = ["beginner", "intermediate", "advanced"];
+const levelOptions: AppSelectOption<UserLevel>[] = [
+  { value: "beginner", label: "Beginner", description: "Foundations and clean timing" },
+  { value: "intermediate", label: "Intermediate", description: "Mixed drills and song work" },
+  { value: "advanced", label: "Advanced", description: "Advanced technique and lead work" },
+];
 
 export function ProfileForm({ error, form, onChange, onSubmit, saving, successMessage }: ProfileFormProps) {
   return (
@@ -63,19 +68,13 @@ export function ProfileForm({ error, form, onChange, onSubmit, saving, successMe
             <p className="mt-1 text-sm font-semibold text-zinc-950">Guitar</p>
           </div>
 
-          <FormField label="Level" helperText="Used to tune the difficulty of generated tasks.">
-            <select
-              value={form.level}
-              onChange={(event) => onChange((current) => ({ ...current, level: event.target.value as UserLevel }))}
-              className={fieldControlClassName}
-            >
-              {levels.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
-          </FormField>
+          <AppSelect
+            label="Level"
+            helperText="Used to tune the difficulty of generated tasks."
+            value={form.level}
+            options={levelOptions}
+            onChange={(nextLevel) => onChange((current) => ({ ...current, level: nextLevel }))}
+          />
 
           <FormField label="Goals" helperText="Be specific: timing, barre chords, riffs, improvisation, or a song target.">
             <textarea

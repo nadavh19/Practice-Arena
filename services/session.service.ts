@@ -5,35 +5,74 @@ import { generatePracticeSession } from "@/algorithms/generatePracticeSession";
 export async function generateAndSaveSession(userId: string, input: GenerateSessionInput) {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, level: true },
+    select: { id: true, level: true, goals: true },
   });
 
   if (!user) {
     return null;
   }
 
-  const tasks = await prisma.task.findMany({
-    select: {
-      id: true,
-      name: true,
-      difficulty: true,
-      duration: true,
-      category: true,
-      description: true,
-      instrument: true,
-      key: true,
-      bpm: true,
-      tab: true,
-      chords: true,
-      scale: true,
-      songName: true,
-      artistName: true,
-    },
-  });
+  const [tasks, recentFeedbackSessions] = await Promise.all([
+    prisma.task.findMany({
+      select: {
+        id: true,
+        name: true,
+        difficulty: true,
+        duration: true,
+        category: true,
+        description: true,
+        instrument: true,
+        key: true,
+        bpm: true,
+        tab: true,
+        chords: true,
+        scale: true,
+        songName: true,
+        artistName: true,
+      },
+    }),
+    prisma.session.findMany({
+      where: {
+        userId,
+        feedback: {
+          isNot: null,
+        },
+      },
+      orderBy: { createdAt: "desc" },
+      take: 5,
+      select: {
+        feedback: {
+          select: {
+            difficultyRating: true,
+            focusRating: true,
+          },
+        },
+      },
+    }),
+  ]);
+
+  const feedbackRatings = recentFeedbackSessions
+    .map((session) => session.feedback)
+    .filter((feedback): feedback is { difficultyRating: number; focusRating: number } => feedback !== null);
+
+  const feedbackSummary =
+    feedbackRatings.length === 0
+      ? undefined
+      : {
+          averageDifficultyRating:
+            feedbackRatings.reduce((sum, feedback) => sum + feedback.difficultyRating, 0) /
+            feedbackRatings.length,
+          averageFocusRating:
+            feedbackRatings.reduce((sum, feedback) => sum + feedback.focusRating, 0) / feedbackRatings.length,
+        };
 
   const generated = generatePracticeSession({
     userLevel: user.level,
     availableTime: input.availableTime,
+    mood: input.mood,
+    sessionGoal: input.goal ?? null,
+    profileGoals: user.goals,
+    feedbackSummary,
     tasks,
   });
 
