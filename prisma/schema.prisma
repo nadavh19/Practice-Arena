@@ -7,10 +7,22 @@ datasource db {
   provider = "postgresql"
 }
 
+enum TaskCategory {
+  exercise
+  scale
+  chord
+  song_chords
+  riff
+  solo
+  rhythm
+  technique
+}
+
 model User {
   id         String    @id @default(uuid())
   email      String    @unique
   password   String
+  nickname   String?
   instrument String
   level      String
   goals      String
@@ -24,6 +36,7 @@ model Session {
   userId        String
   mood          String
   availableTime Int
+  goal          String?
   createdAt     DateTime      @default(now())
 
   user          User          @relation(fields: [userId], references: [id])
@@ -36,7 +49,17 @@ model Task {
   name         String
   difficulty   String
   duration     Int
-  category     String
+  category     TaskCategory
+  description  String?
+  instrument   String?       @default("guitar")
+  key          String?
+  bpm          Int?
+  tab          String?
+  chords       String?
+  scale        String?
+  songName     String?
+  artistName   String?
+  createdAt    DateTime      @default(now())
 
   sessionTasks SessionTask[]
 }

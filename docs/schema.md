@@ -50,14 +50,16 @@ Captures the user’s state (mood, time) and defines a personalized practice pla
 
 ## 🧩 Task
 
-Represents a reusable practice activity.
+Represents reusable practice content.
 
 ### Purpose
-Defines building blocks for practice sessions.
+Defines building blocks for practice sessions, including exercises, scales, chords, riffs, solos, rhythm work, and song-based material.
 
 ### Examples
 - Practice scales
 - Chord transitions
+- Song chords
+- Guitar tabs and riffs
 - Ear training
 - Improvisation
 
@@ -66,7 +68,17 @@ Defines building blocks for practice sessions.
 - `name` — task name
 - `difficulty` — difficulty level
 - `duration` — estimated duration (minutes)
-- `category` — type of task (technique, theory, etc.)
+- `category` — task content type enum: `exercise`, `scale`, `chord`, `song_chords`, `riff`, `solo`, `rhythm`, `technique`
+- `description` — optional explanation or practice instructions
+- `instrument` — optional instrument target, defaults to `guitar`
+- `key` — optional musical key
+- `bpm` — optional tempo
+- `tab` — optional plain-text tab content
+- `chords` — optional chord progression or chord sheet
+- `scale` — optional scale notes or scale pattern description
+- `songName` — optional song title for song-based tasks
+- `artistName` — optional artist name for song-based tasks
+- `createdAt` — task creation timestamp
 
 ### Relationships
 - Can be used in multiple sessions

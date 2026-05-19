@@ -41,3 +41,9 @@ yarn-error.log*
 next-env.d.ts
 
 /app/generated/prisma
+
+# local logs
+/logs/
+.tmp-dev-*.log
+skills-*.json
+SKILL.md
