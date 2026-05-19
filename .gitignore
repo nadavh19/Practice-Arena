@@ -45,3 +45,5 @@ next-env.d.ts
 # local logs
 /logs/
 .tmp-dev-*.log
+skills-*.json
+SKILL.md
