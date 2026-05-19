@@ -1,4 +1,4 @@
-# Practice Arena Prototype - Current State
+# Practice Arena Prototype
 
 Practice Arena is currently a working Next.js 16 prototype for generating and tracking personalized guitar practice sessions. The app is organized around a simple learner flow: a user signs up or logs in, completes a profile, generates a focused practice session, marks completed tasks, submits feedback, and reviews previous sessions. The first screen redirects users based on authentication and profile state: unauthenticated users go to `/auth`, users without a nickname go to `/profile`, and onboarded users go to `/session/new`.
 
