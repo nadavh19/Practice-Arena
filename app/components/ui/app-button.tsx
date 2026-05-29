@@ -11,7 +11,7 @@ type AppButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & ButtonClassNameO
 
 export function getButtonClassName({ fullWidth = false, variant = "primary" }: ButtonClassNameOptions = {}) {
   const baseClassName =
-    "inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold tracking-tight transition-[background-color,border-color,color,box-shadow,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] focus:outline-none focus:ring-2 focus:ring-emerald-700/20 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50";
+    "inline-flex cursor-pointer items-center justify-center rounded-full px-5 py-2.5 text-sm font-semibold tracking-tight transition-[background-color,border-color,color,box-shadow,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] focus:outline-none focus:ring-2 focus:ring-emerald-700/20 active:scale-[0.98] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50";
 
   const variantClassName =
     variant === "primary"
