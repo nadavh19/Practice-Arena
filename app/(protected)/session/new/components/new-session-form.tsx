@@ -1,5 +1,6 @@
 import type { FormEvent } from "react";
 import { AppButton } from "@/app/components/ui/app-button";
+import { AutoResizeTextarea } from "@/app/components/ui/auto-resize-textarea";
 import { FormField, fieldControlClassName } from "@/app/components/ui/form-field";
 import { InlineStatus } from "@/app/components/ui/inline-status";
 import { PageHeading } from "@/app/components/ui/page-heading";
@@ -57,10 +58,10 @@ export function NewSessionForm({
           </FormField>
 
           <FormField label="Goal / focus (optional)" helperText="Examples: clean barre changes, tighter rhythm, A minor solo ideas.">
-            <textarea
+            <AutoResizeTextarea
               value={goal}
               onChange={(event) => onGoalChange(event.target.value)}
-              className={`${fieldControlClassName} min-h-28`}
+              className="min-h-28"
             />
           </FormField>
 

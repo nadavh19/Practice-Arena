@@ -2,6 +2,7 @@ import type { FormEvent } from "react";
 import Link from "next/link";
 import { AppButton, getButtonClassName } from "@/app/components/ui/app-button";
 import { AppSelect, type AppSelectOption } from "@/app/components/ui/app-select";
+import { AutoResizeTextarea } from "@/app/components/ui/auto-resize-textarea";
 import { FormField, fieldControlClassName, readOnlyFieldClassName } from "@/app/components/ui/form-field";
 import { InlineStatus } from "@/app/components/ui/inline-status";
 import { PageHeading } from "@/app/components/ui/page-heading";
@@ -77,11 +78,11 @@ export function ProfileForm({ error, form, onChange, onSubmit, saving, successMe
           />
 
           <FormField label="Goals" helperText="Be specific: timing, barre chords, riffs, improvisation, or a song target.">
-            <textarea
+            <AutoResizeTextarea
               required
               value={form.goals}
               onChange={(event) => onChange((current) => ({ ...current, goals: event.target.value }))}
-              className={`${fieldControlClassName} min-h-32`}
+              className="min-h-32"
             />
           </FormField>
 

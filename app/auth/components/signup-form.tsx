@@ -1,6 +1,7 @@
 import type { FormEvent } from "react";
 import { AppButton } from "@/app/components/ui/app-button";
 import { AppSelect, type AppSelectOption } from "@/app/components/ui/app-select";
+import { AutoResizeTextarea } from "@/app/components/ui/auto-resize-textarea";
 import { FormField, fieldControlClassName, readOnlyFieldClassName } from "@/app/components/ui/form-field";
 import type { UserLevel } from "@/lib/client/types";
 
@@ -69,11 +70,11 @@ export function SignupForm({
         onChange={onLevelChange}
       />
       <FormField label="Goals" helperText="Name the skill, song, or habit you want to improve.">
-        <textarea
+        <AutoResizeTextarea
           required
           value={goals}
           onChange={(event) => onGoalsChange(event.target.value)}
-          className={`${fieldControlClassName} min-h-24`}
+          className="min-h-24"
         />
       </FormField>
       <AppButton disabled={submitting} type="submit" fullWidth>
