@@ -56,8 +56,19 @@ export const completeSessionSchema = z.object({
   completedTaskIds: z.array(z.uuid()).max(100).optional(),
 });
 
+export const chatMessageSchema = z.object({
+  role: z.enum(["user", "assistant"]),
+  content: z.string().trim().min(1).max(2000),
+});
+
+export const chatRequestSchema = z.object({
+  messages: z.array(chatMessageSchema).min(1).max(20),
+});
+
 export type SignupInput = z.infer<typeof signupSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type ProfileUpdateInput = z.infer<typeof profileUpdateSchema>;
 export type GenerateSessionInput = z.infer<typeof generateSessionSchema>;
 export type CompleteSessionInput = z.infer<typeof completeSessionSchema>;
+export type ChatMessageInput = z.infer<typeof chatMessageSchema>;
+export type ChatRequestInput = z.infer<typeof chatRequestSchema>;

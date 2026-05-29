@@ -46,6 +46,7 @@ This guide explains the two concerns that live under `app/` and how to trace UI 
 | `/session/new` | `app/(protected)/session/new/page.tsx` | `POST /api/session/generate` | `app/api/session/generate/route.ts` |
 | `/session/current` | `app/(protected)/session/current/page.tsx` | `GET /api/session/history`, `POST /api/session/complete` | `app/api/session/history/route.ts`, `app/api/session/complete/route.ts` |
 | `/history` | `app/(protected)/history/page.tsx` | `GET /api/session/history`, `GET /api/session/stats` | `app/api/session/history/route.ts`, `app/api/session/stats/route.ts` |
+| `/coach` | `app/(protected)/coach/page.tsx` | `POST /api/chat` | `app/api/chat/route.ts` |
 
 ### API Route to Service Mapping
 
@@ -59,6 +60,7 @@ This guide explains the two concerns that live under `app/` and how to trace UI 
 | `POST /api/session/complete` | `app/api/session/complete/route.ts` | `completeSession` (`services/session.service.ts`) | Prisma ownership checks + completion updates + feedback upsert |
 | `GET /api/session/history` | `app/api/session/history/route.ts` | `getSessionHistory` (`services/session.service.ts`) | Prisma session/task/feedback reads |
 | `GET /api/session/stats` | `app/api/session/stats/route.ts` | `getSessionStats` (`services/session.service.ts`) | Prisma aggregates + counts |
+| `POST /api/chat` | `app/api/chat/route.ts` | `askMusicCoach` (`services/chat.service.ts`) | Prisma profile/session context + Gemini REST call |
 | `GET /api/test` | `app/api/test/route.ts` | No service layer (direct Prisma call) | Prisma connectivity data read |
 
 ## Conventions (Standardized Ownership)
@@ -94,3 +96,6 @@ This guide explains the two concerns that live under `app/` and how to trace UI 
 
 5. History trace:
 - `/history` -> `GET /api/session/history` + `GET /api/session/stats` -> `getSessionHistory` + `getSessionStats`.
+
+6. Coach trace:
+- `/coach` -> `POST /api/chat` -> `app/api/chat/route.ts` -> `askMusicCoach` -> Gemini API with server-side context.

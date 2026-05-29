@@ -76,7 +76,8 @@ body {
 .profile-page-background,
 .new-session-page-background,
 .current-session-page-background,
-.history-page-background {
+.history-page-background,
+.coach-page-background {
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -87,7 +88,8 @@ body {
 .profile-page-background::before,
 .new-session-page-background::before,
 .current-session-page-background::before,
-.history-page-background::before {
+.history-page-background::before,
+.coach-page-background::before {
   position: fixed;
   inset: 0;
   z-index: -1;
@@ -130,6 +132,13 @@ body {
     linear-gradient(120deg, rgba(249, 250, 251, 0.9), rgba(248, 250, 252, 0.76) 48%, rgba(249, 250, 251, 0.96)),
     url("/backgrounds/blue-equalizer-wave.png");
   opacity: 0.86;
+}
+
+.coach-page-background::before {
+  background:
+    linear-gradient(125deg, rgba(249, 250, 251, 0.9), rgba(240, 253, 250, 0.72) 44%, rgba(249, 250, 251, 0.96)),
+    url("/backgrounds/dark-guitar-glow.png");
+  opacity: 0.84;
 }
 
 .music-accent-panel {

@@ -92,3 +92,12 @@ export type GenerateSessionResponse = {
     id: string;
   };
 };
+
+export type CoachChatMessage = {
+  role: "user" | "assistant";
+  content: string;
+};
+
+export type CoachChatResponse = {
+  reply: string;
+};

@@ -40,6 +40,13 @@ Required `.env` values:
 
 1. `DATABASE_URL`
 2. `JWT_SECRET`
+3. `GEMINI_API_KEY`
+
+Optional `.env` values:
+
+1. `GEMINI_MODEL` (defaults to `gemini-2.5-flash`)
+2. `GEMINI_FALLBACK_MODELS` (defaults to `gemini-2.5-flash-lite,gemini-2.0-flash-lite`)
+3. `GEMINI_MAX_OUTPUT_TOKENS` (defaults to `2048`, clamped between `512` and `8192`)
 
 `JWT_SECRET` note:
 
@@ -62,6 +69,13 @@ Set these in Vercel Project Settings -> Environment Variables:
 
 1. `DATABASE_URL`
 2. `JWT_SECRET`
+3. `GEMINI_API_KEY`
+
+Optional:
+
+1. `GEMINI_MODEL`
+2. `GEMINI_FALLBACK_MODELS`
+3. `GEMINI_MAX_OUTPUT_TOKENS`
 
 Apply to both `Preview` and `Production` (and `Development` if needed).
 
@@ -100,6 +114,11 @@ Marks selected tasks as completed and stores feedback ratings.
 
 1. `GET /api/test`
 Simple DB connectivity check.
+
+### 5) AI Coach (Protected)
+
+1. `POST /api/chat`
+Answers music-practice and Practice Arena data questions using the user's profile, recent saved sessions, task details, feedback, and stats. Requires `GEMINI_API_KEY` on the server.
 
 ## Project Architecture (Simple)
 
@@ -202,6 +221,9 @@ Protected session completion endpoint.
 
 6. `app/api/test/route.ts`
 Simple DB connectivity test endpoint.
+
+7. `app/api/chat/route.ts`
+Protected music coach endpoint.
 
 ## User Model Notes
 
