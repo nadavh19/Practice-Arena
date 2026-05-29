@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useRef, useState, type FormEvent } from "react";
-import { AppButton } from "@/app/components/ui/app-button";
+import { useEffect, useRef, useState } from "react";
+import { ChatComposer } from "@/app/components/ui/chat-composer";
 import { InlineStatus } from "@/app/components/ui/inline-status";
 import { PageHeading } from "@/app/components/ui/page-heading";
 import { PageShell } from "@/app/components/ui/page-shell";
@@ -51,11 +51,6 @@ export default function CoachPage() {
     }
 
     setMessages([...nextMessages, { role: "assistant", content: result.data.reply }]);
-  }
-
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    void sendMessage(draft);
   }
 
   return (
@@ -141,22 +136,15 @@ export default function CoachPage() {
 
             <div className="shrink-0 border-t border-slate-200/70 px-4 py-4 sm:px-6">
               {error ? <InlineStatus message={error} variant="error" className="mb-3" /> : null}
-              <form onSubmit={handleSubmit} className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
-                <label className="grid gap-2">
-                  <span className="text-sm font-semibold text-slate-800">Message</span>
-                  <textarea
-                    value={draft}
-                    onChange={(event) => setDraft(event.target.value)}
-                    placeholder="Ask about music practice or your saved sessions..."
-                    rows={3}
-                    maxLength={2000}
-                    className="max-h-40 min-h-24 resize-y rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 text-zinc-950 shadow-[0_12px_30px_-28px_rgba(15,23,42,0.7)] outline-none transition-[border-color,box-shadow] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] placeholder:text-slate-400 focus:border-emerald-600 focus:shadow-[0_0_0_3px_rgba(5,150,105,0.12)]"
-                  />
-                </label>
-                <AppButton type="submit" disabled={sending || !draft.trim()} className="sm:mb-0.5">
-                  {sending ? "Sending..." : "Send"}
-                </AppButton>
-              </form>
+              <ChatComposer
+                disabled={sending}
+                maxLength={2000}
+                onChange={setDraft}
+                onSubmit={() => void sendMessage(draft)}
+                placeholder="Ask about music practice or your saved sessions..."
+                sendingLabel="Sending..."
+                value={draft}
+              />
             </div>
           </div>
         </SurfaceCard>
