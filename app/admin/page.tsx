@@ -37,6 +37,14 @@ type TaskFormState = {
   tab: string;
 };
 
+type AdminTab = "users" | "taskInventory" | "addTask";
+
+const adminTabs: Array<{ id: AdminTab; label: string }> = [
+  { id: "users", label: "Users" },
+  { id: "taskInventory", label: "Task inventory" },
+  { id: "addTask", label: "Add task" },
+];
+
 const difficultyOptions: AppSelectOption<UserLevel>[] = [
   { value: "beginner", label: "Beginner", description: "Simple and approachable" },
   { value: "intermediate", label: "Intermediate", description: "More moving parts" },
@@ -142,6 +150,7 @@ export default function AdminPage() {
   const [savingTask, setSavingTask] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [taskMessage, setTaskMessage] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<AdminTab>("users");
 
   const selectedOverview = useMemo(
     () => users.find((user) => user.id === selectedUserId) ?? null,
@@ -282,117 +291,168 @@ export default function AdminPage() {
       </header>
 
       <PageShell width="7xl" className="space-y-6 py-6">
-        <div className="grid gap-6 lg:grid-cols-[0.78fr_1.22fr]">
-          <SurfaceCard className="rounded-[1.5rem] p-5">
-            <PageHeading title="Users" description="Select a player to inspect their saved practice data." />
-            <div className="mt-5 space-y-2">
-              {users.length === 0 ? (
-                <InlineStatus message="No regular users yet." variant="muted" />
-              ) : (
-                users.map((user) => {
-                  const active = user.id === selectedUserId;
-                  return (
-                    <button
-                      key={user.id}
-                      type="button"
-                      onClick={() => setSelectedUserId(user.id)}
-                      className={`w-full rounded-2xl border px-4 py-3 text-left transition-[background-color,border-color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-[0.99] ${
-                        active ? "border-zinc-900 bg-zinc-950 text-white" : "border-slate-200 bg-white text-zinc-950 hover:border-slate-300"
-                      }`}
-                    >
-                      <div className="flex items-start justify-between gap-3">
-                        <div className="min-w-0">
-                          <p className="truncate text-sm font-semibold">{user.nickname || user.email}</p>
-                          <p className={`mt-1 truncate text-xs ${active ? "text-slate-300" : "text-slate-500"}`}>
-                            {user.email}
-                          </p>
-                        </div>
-                        <p className={`font-mono text-xs ${active ? "text-slate-300" : "text-slate-500"}`}>
-                          {user.sessionCount} sessions
-                        </p>
-                      </div>
-                    </button>
-                  );
-                })
-              )}
-            </div>
-          </SurfaceCard>
+        <div
+          role="tablist"
+          aria-label="Admin panel sections"
+          className="flex gap-2 overflow-x-auto rounded-full border border-slate-200 bg-white p-1 shadow-[0_16px_40px_-34px_rgba(15,23,42,0.45)]"
+        >
+          {adminTabs.map((tab) => {
+            const active = tab.id === activeTab;
 
-          <SurfaceCard className="rounded-[1.5rem] p-5">
-            <PageHeading
-              title={selectedOverview ? selectedOverview.nickname || selectedOverview.email : "User detail"}
-              description="Profile, session history, assigned tasks, and feedback."
-            />
-            {detailLoading ? <InlineStatus message="Loading user detail..." variant="muted" className="mt-5" /> : null}
-            {!detailLoading && selectedUser ? (
-              <div className="mt-5 space-y-5">
-                <div className="grid gap-3 sm:grid-cols-4">
-                  {[
-                    ["Sessions", selectedOverview?.sessionCount ?? selectedUser.sessions.length],
-                    ["Assigned", selectedOverview?.assignedTaskCount ?? 0],
-                    ["Completed", selectedOverview?.completedTaskCount ?? 0],
-                    ["Feedback", selectedOverview?.feedbackCount ?? 0],
-                  ].map(([label, value]) => (
-                    <div key={label} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                      <p className="text-xs font-medium uppercase tracking-[0.14em] text-slate-500">{label}</p>
-                      <p className="mt-2 font-mono text-2xl font-semibold text-zinc-950">{value}</p>
-                    </div>
-                  ))}
-                </div>
-                <div className="rounded-2xl border border-slate-200 bg-white p-4">
-                  <p className="text-sm font-semibold text-zinc-950">{selectedUser.email}</p>
-                  <p className="mt-2 text-sm leading-6 text-slate-600">
-                    {selectedUser.level} / {selectedUser.instrument} / joined {formatDate(selectedUser.createdAt)}
-                  </p>
-                  <p className="mt-2 text-sm leading-6 text-slate-700">{selectedUser.goals}</p>
-                </div>
-                <div className="max-h-[34rem] space-y-3 overflow-y-auto pr-1">
-                  {selectedUser.sessions.length === 0 ? (
-                    <InlineStatus message="This user has no sessions yet." variant="muted" />
-                  ) : (
-                    selectedUser.sessions.map((session) => (
-                      <article key={session.id} className="rounded-2xl border border-slate-200 bg-white p-4">
-                        <div className="flex flex-wrap items-start justify-between gap-3">
-                          <div>
-                            <p className="text-sm font-semibold text-zinc-950">
-                              {session.availableTime} min / {session.mood}
-                            </p>
-                            <p className="mt-1 text-xs text-slate-500">{formatDate(session.createdAt)}</p>
-                          </div>
-                          <p className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
-                            {session.feedback
-                              ? `Focus ${session.feedback.focusRating}, difficulty ${session.feedback.difficultyRating}`
-                              : "No feedback"}
-                          </p>
-                        </div>
-                        {session.goal ? <p className="mt-3 text-sm leading-6 text-slate-600">{session.goal}</p> : null}
-                        <ul className="mt-3 grid gap-2">
-                          {session.tasks.map((item) => (
-                            <li key={item.taskId} className="rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-700">
-                              <span className="font-semibold text-zinc-950">{item.task.name}</span>
-                              <span className="text-slate-500"> / {item.completed ? "completed" : "pending"}</span>
-                            </li>
-                          ))}
-                        </ul>
-                      </article>
-                    ))
-                  )}
-                </div>
-              </div>
-            ) : null}
-          </SurfaceCard>
+            return (
+              <button
+                key={tab.id}
+                type="button"
+                role="tab"
+                aria-selected={active}
+                aria-controls={`${tab.id}-panel`}
+                id={`${tab.id}-tab`}
+                onClick={() => setActiveTab(tab.id)}
+                className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-[background-color,color,box-shadow,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-[0.98] ${
+                  active
+                    ? "bg-zinc-950 text-white shadow-[0_14px_30px_-24px_rgba(15,23,42,0.9)]"
+                    : "text-slate-600 hover:bg-slate-100 hover:text-zinc-950"
+                }`}
+              >
+                {tab.label}
+              </button>
+            );
+          })}
         </div>
 
-        <div className="grid gap-6 lg:grid-cols-[0.95fr_1.05fr]">
+        <section
+          id="users-panel"
+          role="tabpanel"
+          aria-labelledby="users-tab"
+          hidden={activeTab !== "users"}
+          className="space-y-6"
+        >
+          <div className="grid gap-6 lg:grid-cols-[0.78fr_1.22fr]">
+            <SurfaceCard className="rounded-[1.5rem] p-5">
+              <PageHeading title="Users" description="Select a player to inspect their saved practice data." />
+              <div className="mt-5 space-y-2">
+                {users.length === 0 ? (
+                  <InlineStatus message="No regular users yet." variant="muted" />
+                ) : (
+                  users.map((user) => {
+                    const active = user.id === selectedUserId;
+                    return (
+                      <button
+                        key={user.id}
+                        type="button"
+                        onClick={() => setSelectedUserId(user.id)}
+                        className={`w-full rounded-2xl border px-4 py-3 text-left transition-[background-color,border-color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-[0.99] ${
+                          active
+                            ? "border-zinc-900 bg-zinc-950 text-white"
+                            : "border-slate-200 bg-white text-zinc-950 hover:border-slate-300"
+                        }`}
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="min-w-0">
+                            <p className="truncate text-sm font-semibold">{user.nickname || user.email}</p>
+                            <p className={`mt-1 truncate text-xs ${active ? "text-slate-300" : "text-slate-500"}`}>
+                              {user.email}
+                            </p>
+                          </div>
+                          <p className={`font-mono text-xs ${active ? "text-slate-300" : "text-slate-500"}`}>
+                            {user.sessionCount} sessions
+                          </p>
+                        </div>
+                      </button>
+                    );
+                  })
+                )}
+              </div>
+            </SurfaceCard>
+
+            <SurfaceCard className="rounded-[1.5rem] p-5">
+              <PageHeading
+                title={selectedOverview ? selectedOverview.nickname || selectedOverview.email : "User detail"}
+                description="Profile, session history, assigned tasks, and feedback."
+              />
+              {detailLoading ? <InlineStatus message="Loading user detail..." variant="muted" className="mt-5" /> : null}
+              {!detailLoading && selectedUser ? (
+                <div className="mt-5 space-y-5">
+                  <div className="grid gap-3 sm:grid-cols-4">
+                    {[
+                      ["Sessions", selectedOverview?.sessionCount ?? selectedUser.sessions.length],
+                      ["Assigned", selectedOverview?.assignedTaskCount ?? 0],
+                      ["Completed", selectedOverview?.completedTaskCount ?? 0],
+                      ["Feedback", selectedOverview?.feedbackCount ?? 0],
+                    ].map(([label, value]) => (
+                      <div key={label} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+                        <p className="text-xs font-medium uppercase tracking-[0.14em] text-slate-500">{label}</p>
+                        <p className="mt-2 font-mono text-2xl font-semibold text-zinc-950">{value}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="rounded-2xl border border-slate-200 bg-white p-4">
+                    <p className="text-sm font-semibold text-zinc-950">{selectedUser.email}</p>
+                    <p className="mt-2 text-sm leading-6 text-slate-600">
+                      {selectedUser.level} / {selectedUser.instrument} / joined {formatDate(selectedUser.createdAt)}
+                    </p>
+                    <p className="mt-2 text-sm leading-6 text-slate-700">{selectedUser.goals}</p>
+                  </div>
+                  <div className="max-h-[34rem] space-y-3 overflow-y-auto pr-1">
+                    {selectedUser.sessions.length === 0 ? (
+                      <InlineStatus message="This user has no sessions yet." variant="muted" />
+                    ) : (
+                      selectedUser.sessions.map((session) => (
+                        <article key={session.id} className="rounded-2xl border border-slate-200 bg-white p-4">
+                          <div className="flex flex-wrap items-start justify-between gap-3">
+                            <div>
+                              <p className="text-sm font-semibold text-zinc-950">
+                                {session.availableTime} min / {session.mood}
+                              </p>
+                              <p className="mt-1 text-xs text-slate-500">{formatDate(session.createdAt)}</p>
+                            </div>
+                            <p className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
+                              {session.feedback
+                                ? `Focus ${session.feedback.focusRating}, difficulty ${session.feedback.difficultyRating}`
+                                : "No feedback"}
+                            </p>
+                          </div>
+                          {session.goal ? <p className="mt-3 text-sm leading-6 text-slate-600">{session.goal}</p> : null}
+                          <ul className="mt-3 grid gap-2">
+                            {session.tasks.map((item) => (
+                              <li key={item.taskId} className="rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-700">
+                                <span className="font-semibold text-zinc-950">{item.task.name}</span>
+                                <span className="text-slate-500"> / {item.completed ? "completed" : "pending"}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </article>
+                      ))
+                    )}
+                  </div>
+                </div>
+              ) : null}
+            </SurfaceCard>
+          </div>
+        </section>
+
+        <section
+          id="taskInventory-panel"
+          role="tabpanel"
+          aria-labelledby="taskInventory-tab"
+          hidden={activeTab !== "taskInventory"}
+        >
           <SurfaceCard className="rounded-[1.5rem] p-5">
             <PageHeading title="Task inventory" description="Reusable tasks available to session generation." />
-            <ul className="mt-5 max-h-[38rem] space-y-2 overflow-y-auto pr-1">
+            <ul className="mt-5 max-h-[42rem] space-y-2 overflow-y-auto pr-1">
               {tasks.map((task) => (
                 <TaskPreview key={task.id} task={task} />
               ))}
             </ul>
           </SurfaceCard>
+        </section>
 
+        <section
+          id="addTask-panel"
+          role="tabpanel"
+          aria-labelledby="addTask-tab"
+          hidden={activeTab !== "addTask"}
+        >
           <SurfaceCard className="rounded-[1.5rem] p-5">
             <PageHeading title="Add task" description="Create a reusable task for future generated sessions." />
             <form className="mt-5 space-y-4" onSubmit={handleCreateTask}>
@@ -507,7 +567,7 @@ export default function AdminPage() {
             </form>
             {taskMessage ? <InlineStatus message={taskMessage} variant="success" className="mt-5" /> : null}
           </SurfaceCard>
-        </div>
+        </section>
 
         {error ? <InlineStatus message={error} variant="error" /> : null}
       </PageShell>
