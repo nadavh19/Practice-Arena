@@ -1,5 +1,6 @@
 import type { FormEvent } from "react";
 import { AppButton } from "@/app/components/ui/app-button";
+import { AppSelect, type AppSelectOption } from "@/app/components/ui/app-select";
 import { AutoResizeTextarea } from "@/app/components/ui/auto-resize-textarea";
 import { FormField, fieldControlClassName } from "@/app/components/ui/form-field";
 import { InlineStatus } from "@/app/components/ui/inline-status";
@@ -18,6 +19,15 @@ type NewSessionFormProps = {
   submitting: boolean;
 };
 
+const moodOptions: AppSelectOption[] = [
+  { value: "focused", label: "Focused", description: "Ready for deliberate practice" },
+  { value: "energized", label: "Energized", description: "Up for a lively session" },
+  { value: "calm", label: "Calm", description: "Steady and patient" },
+  { value: "tired", label: "Tired", description: "Keep the plan lighter" },
+  { value: "frustrated", label: "Frustrated", description: "Reset with focused wins" },
+  { value: "distracted", label: "Distracted", description: "Short and structured" },
+];
+
 export function NewSessionForm({
   availableTime,
   error,
@@ -35,15 +45,13 @@ export function NewSessionForm({
         <PageHeading title="Session context" description="Set your state and we will generate your next practice plan." />
 
         <form className="mt-7 space-y-5" onSubmit={onSubmit}>
-          <FormField label="Mood" helperText="One or two words is enough.">
-            <input
-              required
-              value={mood}
-              onChange={(event) => onMoodChange(event.target.value)}
-              placeholder="Focused, tired, energized..."
-              className={fieldControlClassName}
-            />
-          </FormField>
+          <AppSelect
+            label="Mood"
+            helperText="Choose the state that best fits this session."
+            value={mood}
+            options={moodOptions}
+            onChange={onMoodChange}
+          />
 
           <FormField label="Available time (minutes)" helperText="Between 5 and 240 minutes.">
             <input

@@ -10,7 +10,7 @@ import type { GenerateSessionResponse } from "@/lib/client/types";
 
 export default function NewSessionPage() {
   const router = useRouter();
-  const [mood, setMood] = useState("");
+  const [mood, setMood] = useState("focused");
   const [availableTime, setAvailableTime] = useState("30");
   const [goal, setGoal] = useState("");
   const [submitting, setSubmitting] = useState(false);
