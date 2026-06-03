@@ -20,10 +20,12 @@ Stores user identity, preferences, and practice goals.
 - `instrument` — instrument (e.g., guitar, piano)
 - `level` — skill level (beginner, intermediate, advanced)
 - `goals` — user’s practice goals
+- `role` — whether the account is a regular user or admin
 - `createdAt` — account creation timestamp
 
 ### Relationships
-- A user can have multiple practice sessions
+- A regular user can have multiple practice sessions
+- Admin users are used for management access and are not shown in the regular admin user list
 
 ---
 

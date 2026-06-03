@@ -16,6 +16,7 @@ export type ApiFailure = {
 export type ApiResult<T> = ApiSuccess<T> | ApiFailure;
 
 export type UserLevel = "beginner" | "intermediate" | "advanced";
+export type UserRole = "user" | "admin";
 
 export type UserProfile = {
   id: string;
@@ -24,6 +25,7 @@ export type UserProfile = {
   instrument: "guitar";
   level: UserLevel;
   goals: string;
+  role: UserRole;
   createdAt: string;
 };
 
@@ -52,6 +54,10 @@ export type PracticeTask = {
   scale: string | null;
   songName: string | null;
   artistName: string | null;
+};
+
+export type AdminPracticeTask = PracticeTask & {
+  createdAt: string;
 };
 
 export type SessionTaskItem = {
@@ -85,6 +91,45 @@ export type SessionStats = {
 export type AuthResponse = {
   token: string;
   user: UserProfile;
+};
+
+export type AdminUserOverview = UserProfile & {
+  sessionCount: number;
+  assignedTaskCount: number;
+  completedTaskCount: number;
+  feedbackCount: number;
+};
+
+export type AdminUserDetail = UserProfile & {
+  sessions: Array<{
+    id: string;
+    createdAt: string;
+    mood: string;
+    availableTime: number;
+    goal: string | null;
+    tasks: Array<{
+      taskId: string;
+      completed: boolean;
+      task: AdminPracticeTask;
+    }>;
+    feedback: SessionFeedback;
+  }>;
+};
+
+export type AdminCreateTaskPayload = {
+  name: string;
+  difficulty: UserLevel;
+  duration: number;
+  category: TaskCategory;
+  description?: string | null;
+  instrument?: string;
+  key?: string | null;
+  bpm?: number | null;
+  tab?: string | null;
+  chords?: string | null;
+  scale?: string | null;
+  songName?: string | null;
+  artistName?: string | null;
 };
 
 export type GenerateSessionResponse = {

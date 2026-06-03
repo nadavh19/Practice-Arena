@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 const levelSchema = z.enum(["beginner", "intermediate", "advanced"]);
+const taskCategorySchema = z.enum(["exercise", "scale", "chord", "song_chords", "riff", "solo", "rhythm", "technique"]);
 const guitarOnlySchema = z
   .string()
   .trim()
@@ -23,6 +24,11 @@ export const signupSchema = z.object({
 export const loginSchema = z.object({
   email: baseEmailSchema,
   password: basePasswordSchema,
+});
+
+export const adminLoginSchema = z.object({
+  email: z.string().trim().min(1).max(254).toLowerCase(),
+  password: z.string().min(1).max(100),
 });
 
 export const profileUpdateSchema = z
@@ -65,10 +71,43 @@ export const chatRequestSchema = z.object({
   messages: z.array(chatMessageSchema).min(1).max(20),
 });
 
+const optionalTextSchema = z
+  .string()
+  .trim()
+  .max(2000)
+  .transform((value) => (value ? value : null))
+  .nullable()
+  .optional();
+
+export const adminCreateTaskSchema = z.object({
+  name: z.string().trim().min(1).max(120),
+  difficulty: levelSchema,
+  duration: z.int().min(1).max(240),
+  category: taskCategorySchema,
+  description: optionalTextSchema,
+  instrument: z
+    .string()
+    .trim()
+    .min(1)
+    .max(40)
+    .transform((value) => value.toLowerCase())
+    .optional()
+    .default("guitar"),
+  key: optionalTextSchema,
+  bpm: z.int().min(1).max(300).nullable().optional(),
+  tab: optionalTextSchema,
+  chords: optionalTextSchema,
+  scale: optionalTextSchema,
+  songName: optionalTextSchema,
+  artistName: optionalTextSchema,
+});
+
 export type SignupInput = z.infer<typeof signupSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
+export type AdminLoginInput = z.infer<typeof adminLoginSchema>;
 export type ProfileUpdateInput = z.infer<typeof profileUpdateSchema>;
 export type GenerateSessionInput = z.infer<typeof generateSessionSchema>;
 export type CompleteSessionInput = z.infer<typeof completeSessionSchema>;
 export type ChatMessageInput = z.infer<typeof chatMessageSchema>;
 export type ChatRequestInput = z.infer<typeof chatRequestSchema>;
+export type AdminCreateTaskInput = z.infer<typeof adminCreateTaskSchema>;

@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 import { apiError, apiSuccess } from "@/lib/api-response";
 import { createToken } from "@/lib/auth";
 import { getValidationErrorMessage } from "@/lib/validation-error";
-import { loginSchema } from "@/lib/validators";
+import { adminLoginSchema } from "@/lib/validators";
 import { getUserByEmail, getUserById } from "@/services/user.service";
 
 export async function POST(request: Request) {
@@ -14,13 +14,13 @@ export async function POST(request: Request) {
     return apiError(400, { code: "INVALID_JSON", message: "Request body must be valid JSON" });
   }
 
-  const parsed = loginSchema.safeParse(body);
+  const parsed = adminLoginSchema.safeParse(body);
   if (!parsed.success) {
     return apiError(400, { code: "VALIDATION_ERROR", message: getValidationErrorMessage(parsed.error) });
   }
 
   const userWithPassword = await getUserByEmail(parsed.data.email);
-  if (!userWithPassword || userWithPassword.role !== "user") {
+  if (!userWithPassword || userWithPassword.role !== "admin") {
     return apiError(401, { code: "INVALID_CREDENTIALS", message: "Invalid email or password" });
   }
 

@@ -9,6 +9,7 @@ const safeUserSelect = {
   instrument: true,
   level: true,
   goals: true,
+  role: true,
   createdAt: true,
 } as const;
 
@@ -34,6 +35,7 @@ export async function createUser(input: SignupInput) {
       instrument: "guitar",
       level: input.level,
       goals: input.goals,
+      role: "user",
     },
     select: safeUserSelect,
   });

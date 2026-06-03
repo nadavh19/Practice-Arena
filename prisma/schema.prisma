@@ -18,6 +18,11 @@ enum TaskCategory {
   technique
 }
 
+enum UserRole {
+  user
+  admin
+}
+
 model User {
   id         String    @id @default(uuid())
   email      String    @unique
@@ -26,6 +31,7 @@ model User {
   instrument String
   level      String
   goals      String
+  role       UserRole  @default(user)
   createdAt  DateTime  @default(now())
 
   sessions   Session[]

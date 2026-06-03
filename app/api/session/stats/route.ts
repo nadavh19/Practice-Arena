@@ -1,9 +1,9 @@
 import { apiError, apiSuccess } from "@/lib/api-response";
-import { getUserFromRequest } from "@/lib/auth";
+import { getRegularUserFromRequest } from "@/lib/auth";
 import { getSessionStats } from "@/services/session.service";
 
 export async function GET(request: Request) {
-  const authUser = await getUserFromRequest(request);
+  const authUser = await getRegularUserFromRequest(request);
   if (!authUser) {
     return apiError(401, { code: "UNAUTHORIZED", message: "Missing or invalid token" });
   }

@@ -1,11 +1,11 @@
 import { apiError, apiSuccess } from "@/lib/api-response";
-import { getUserFromRequest } from "@/lib/auth";
+import { getRegularUserFromRequest } from "@/lib/auth";
 import { getValidationErrorMessage } from "@/lib/validation-error";
 import { profileUpdateSchema } from "@/lib/validators";
 import { getUserById, updateUserProfile } from "@/services/user.service";
 
 export async function GET(request: Request) {
-  const authUser = await getUserFromRequest(request);
+  const authUser = await getRegularUserFromRequest(request);
   if (!authUser) {
     return apiError(401, { code: "UNAUTHORIZED", message: "Missing or invalid token" });
   }
@@ -19,7 +19,7 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const authUser = await getUserFromRequest(request);
+  const authUser = await getRegularUserFromRequest(request);
   if (!authUser) {
     return apiError(401, { code: "UNAUTHORIZED", message: "Missing or invalid token" });
   }

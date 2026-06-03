@@ -47,6 +47,8 @@ Optional `.env` values:
 1. `GEMINI_MODEL` (defaults to `gemini-2.5-flash`)
 2. `GEMINI_FALLBACK_MODELS` (defaults to `gemini-2.5-flash-lite,gemini-2.0-flash-lite`)
 3. `GEMINI_MAX_OUTPUT_TOKENS` (defaults to `2048`, clamped between `512` and `8192`)
+4. `ADMIN_EMAIL` (defaults to `admin@local` when seeding)
+5. `ADMIN_PASSWORD` (defaults to `admin` when seeding)
 
 `JWT_SECRET` note:
 
@@ -76,6 +78,8 @@ Optional:
 1. `GEMINI_MODEL`
 2. `GEMINI_FALLBACK_MODELS`
 3. `GEMINI_MAX_OUTPUT_TOKENS`
+4. `ADMIN_EMAIL`
+5. `ADMIN_PASSWORD`
 
 Apply to both `Preview` and `Production` (and `Development` if needed).
 
@@ -88,6 +92,8 @@ Creates user and returns JWT token.
 
 2. `POST /api/auth/login`
 Validates credentials and returns JWT token.
+
+Admin accounts are DB-backed users with role `admin`, but they must sign in through the admin auth route.
 
 Use returned token in protected routes:
 
@@ -119,6 +125,23 @@ Simple DB connectivity check.
 
 1. `POST /api/chat`
 Answers music-practice and Practice Arena data questions using the user's profile, recent saved sessions, task details, feedback, and stats. Requires `GEMINI_API_KEY` on the server.
+
+### 6) Admin (Admin Protected)
+
+1. `POST /api/admin/auth/login`
+Validates an admin account and returns an admin JWT token.
+
+2. `GET /api/admin/users`
+Lists regular users with practice activity counts.
+
+3. `GET /api/admin/users/[userId]`
+Returns one regular user with sessions, assigned tasks, completion state, and feedback.
+
+4. `GET /api/admin/tasks`
+Lists reusable practice tasks.
+
+5. `POST /api/admin/tasks`
+Creates a reusable practice task.
 
 ## Project Architecture (Simple)
 
@@ -235,8 +258,11 @@ Current `User` key fields:
 4. `instrument` (currently always `guitar`)
 5. `level`
 6. `goals`
+7. `role` (`user` or `admin`, defaults to `user`)
 
 `nickname` is not unique and can be cleared (`null`) through profile update.
+
+The first admin account is created or updated by `npm run prisma:seed` using `ADMIN_EMAIL` and `ADMIN_PASSWORD`.
 
 ## How Data Moves in a Request
 

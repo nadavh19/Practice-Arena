@@ -57,7 +57,7 @@ export function verifyToken(token: string): TokenPayload | null {
   }
 }
 
-export async function getUserFromRequest(request: Request): Promise<User | null> {
+export async function getAuthenticatedUserFromRequest(request: Request): Promise<User | null> {
   const token = extractBearerToken(request);
   if (!token) {
     return null;
@@ -76,3 +76,15 @@ export async function getUserFromRequest(request: Request): Promise<User | null>
 
   return user;
 }
+
+export async function getRegularUserFromRequest(request: Request): Promise<User | null> {
+  const user = await getAuthenticatedUserFromRequest(request);
+  return user?.role === "user" ? user : null;
+}
+
+export async function getAdminFromRequest(request: Request): Promise<User | null> {
+  const user = await getAuthenticatedUserFromRequest(request);
+  return user?.role === "admin" ? user : null;
+}
+
+export const getUserFromRequest = getRegularUserFromRequest;
