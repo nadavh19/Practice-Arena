@@ -32,8 +32,8 @@ function TaskMetaBadge({ accent = false, value }: TaskMetaBadgeProps) {
       className={[
         "rounded-full px-3 py-1 text-xs font-medium tracking-tight",
         accent
-          ? "bg-emerald-50 text-emerald-800 ring-1 ring-emerald-200/70"
-          : "bg-slate-100 text-slate-700 ring-1 ring-slate-200/70",
+          ? "bg-amber-50 text-amber-900 ring-1 ring-amber-200/80"
+          : "bg-violet-50 text-violet-800 ring-1 ring-violet-200/70",
       ].join(" ")}
     >
       {value}
@@ -46,7 +46,7 @@ function TaskTextSection({ children, label, monospace = false }: TaskTextSection
     <section className="space-y-2">
       <h4 className="text-[0.68rem] font-semibold uppercase tracking-[0.14em] text-slate-500">{label}</h4>
       {monospace ? (
-        <pre className="overflow-x-auto whitespace-pre rounded-2xl border border-slate-800 bg-zinc-950 p-4 font-mono text-xs leading-relaxed text-zinc-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
+        <pre className="overflow-x-auto whitespace-pre rounded-2xl border border-violet-950 bg-[#171326] p-4 font-mono text-xs leading-relaxed text-zinc-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)]">
           {children.trim()}
         </pre>
       ) : (
@@ -71,7 +71,7 @@ export function TaskDetails({ className, completionLabel, completionVariant = "d
   return (
     <article
       className={[
-        "group overflow-hidden rounded-[1.75rem] border border-slate-200/70 bg-white shadow-[0_20px_45px_-30px_rgba(15,23,42,0.35)] transition-[border-color,box-shadow,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-slate-300 hover:shadow-[0_24px_55px_-34px_rgba(15,23,42,0.42)]",
+        "group overflow-hidden rounded-[1.75rem] border border-violet-200/70 bg-white shadow-[0_20px_45px_-30px_rgba(76,29,149,0.28)] transition-[border-color,box-shadow,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:-translate-y-0.5 hover:border-violet-300 hover:shadow-[0_24px_55px_-34px_rgba(76,29,149,0.34)]",
         className ?? "",
       ]
         .filter(Boolean)
@@ -85,15 +85,15 @@ export function TaskDetails({ className, completionLabel, completionVariant = "d
               <span
                 className={`rounded-full px-3 py-1 text-xs font-medium tracking-tight ring-1 ${
                   completionVariant === "done"
-                    ? "bg-emerald-50 text-emerald-800 ring-emerald-200/70"
-                    : "bg-slate-100 text-slate-700 ring-slate-200/70"
+                    ? "bg-amber-50 text-amber-900 ring-amber-200/80"
+                    : "bg-violet-50 text-violet-800 ring-violet-200/70"
                 }`}
               >
                 {completionLabel}
               </span>
             ) : null}
           </div>
-          <h3 className="max-w-[18ch] text-2xl font-semibold leading-tight tracking-tight text-zinc-950 sm:max-w-[22ch]">
+          <h3 className="max-w-[18ch] text-2xl font-semibold leading-tight tracking-tight text-[#171326] sm:max-w-[22ch]">
             {task.name}
           </h3>
           {hasSongInfo ? (
@@ -112,7 +112,7 @@ export function TaskDetails({ className, completionLabel, completionVariant = "d
       </div>
 
       {hasPracticeContent ? (
-        <div className="grid gap-5 border-t border-slate-200/70 bg-slate-50/60 p-5 sm:p-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
+        <div className="grid gap-5 border-t border-violet-200/70 bg-violet-50/60 p-5 sm:p-6 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)]">
           {hasText(task.description) ? (
             <div className="lg:col-span-2">
               <TaskTextSection label="Practice note">{task.description}</TaskTextSection>

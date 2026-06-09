@@ -64,7 +64,7 @@ export default function CoachPage() {
 
           <SurfaceCard className="space-y-4">
             <div>
-              <p className="text-sm font-semibold tracking-tight text-zinc-950">Try a question</p>
+              <p className="text-sm font-semibold tracking-tight text-[#171326]">Try a question</p>
               <p className="mt-1 text-sm leading-6 text-slate-600">
                 The coach reads your profile and recent sessions when answering.
               </p>
@@ -76,7 +76,7 @@ export default function CoachPage() {
                   type="button"
                   onClick={() => void sendMessage(prompt)}
                   disabled={sending}
-                  className="rounded-2xl border border-slate-200 bg-white px-4 py-3 text-left text-sm font-medium leading-5 text-slate-800 shadow-[0_12px_30px_-28px_rgba(15,23,42,0.75)] transition-[background-color,border-color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-emerald-200 hover:bg-emerald-50/50 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
+                  className="rounded-2xl border border-violet-200 bg-white px-4 py-3 text-left text-sm font-medium leading-5 text-violet-950 shadow-[0_12px_30px_-28px_rgba(76,29,149,0.45)] transition-[background-color,border-color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-violet-300 hover:bg-violet-50 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50"
                 >
                   {prompt}
                 </button>
@@ -87,8 +87,8 @@ export default function CoachPage() {
 
         <SurfaceCard className="h-[calc(100dvh-9rem)] min-h-[620px] max-h-[900px] p-0 sm:p-0">
           <div className="flex h-full min-h-0 flex-col">
-            <div className="shrink-0 border-b border-slate-200/70 px-5 py-4 sm:px-6">
-              <p className="text-sm font-semibold tracking-tight text-zinc-950">Music-only assistant</p>
+            <div className="shrink-0 border-b border-violet-200/70 px-5 py-4 sm:px-6">
+              <p className="text-sm font-semibold tracking-tight text-[#171326]">Music-only assistant</p>
               <p className="mt-1 text-xs leading-5 text-slate-500">
                 Questions outside music practice or Practice Arena are refused.
               </p>
@@ -98,7 +98,7 @@ export default function CoachPage() {
               {messages.length === 0 ? (
                 <div className="flex min-h-full items-center justify-center">
                   <div className="max-w-md text-center">
-                    <p className="text-lg font-semibold tracking-tight text-zinc-950">Ready when your hands are.</p>
+                    <p className="text-lg font-semibold tracking-tight text-[#171326]">Ready when your hands are.</p>
                     <p className="mt-2 text-sm leading-6 text-slate-600">
                       Ask about cleaner chord changes, how to practice a task, or what your recent feedback suggests.
                     </p>
@@ -113,8 +113,8 @@ export default function CoachPage() {
                         <div
                           className={`max-w-[85%] rounded-[1.35rem] px-4 py-3 text-sm leading-6 shadow-[0_14px_34px_-30px_rgba(15,23,42,0.5)] ${
                             isUser
-                              ? "bg-zinc-950 text-white"
-                              : "border border-slate-200/70 bg-slate-50 text-slate-800"
+                              ? "bg-violet-900 text-white"
+                              : "border border-violet-200/70 bg-violet-50 text-violet-950"
                           }`}
                         >
                           <p className="whitespace-pre-wrap">{message.content}</p>
@@ -124,7 +124,7 @@ export default function CoachPage() {
                   })}
                   {sending ? (
                     <div className="flex justify-start">
-                      <div className="rounded-[1.35rem] border border-slate-200/70 bg-slate-50 px-4 py-3 text-sm text-slate-600">
+                      <div className="rounded-[1.35rem] border border-violet-200/70 bg-violet-50 px-4 py-3 text-sm text-violet-800">
                         Thinking through your practice data...
                       </div>
                     </div>
@@ -134,7 +134,7 @@ export default function CoachPage() {
               )}
             </div>
 
-            <div className="shrink-0 border-t border-slate-200/70 px-4 py-4 sm:px-6">
+            <div className="shrink-0 border-t border-violet-200/70 px-4 py-4 sm:px-6">
               {error ? <InlineStatus message={error} variant="error" className="mb-3" /> : null}
               <ChatComposer
                 disabled={sending}

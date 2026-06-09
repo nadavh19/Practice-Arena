@@ -66,7 +66,7 @@ export function ChatComposer({
   return (
     <form onSubmit={handleSubmit} className="grid gap-3 sm:grid-cols-[1fr_auto] sm:items-end">
       <label className="grid gap-2">
-        <span className="text-sm font-semibold text-slate-800">Message</span>
+        <span className="text-sm font-semibold text-violet-950">Message</span>
         <textarea
           ref={textareaRef}
           value={value}
@@ -76,7 +76,7 @@ export function ChatComposer({
           rows={1}
           maxLength={maxLength}
           disabled={disabled}
-          className="min-h-14 resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm leading-6 text-zinc-950 shadow-[0_12px_30px_-28px_rgba(15,23,42,0.7)] outline-none transition-[border-color,box-shadow] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] placeholder:text-slate-400 focus:border-emerald-600 focus:shadow-[0_0_0_3px_rgba(5,150,105,0.12)] disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-500"
+          className="min-h-14 resize-none rounded-2xl border border-violet-200 bg-white px-4 py-3 text-sm leading-6 text-[#171326] shadow-[0_12px_30px_-28px_rgba(76,29,149,0.45)] outline-none transition-[border-color,box-shadow] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] placeholder:text-slate-400 focus:border-violet-600 focus:shadow-[0_0_0_3px_rgba(109,40,217,0.14)] disabled:cursor-not-allowed disabled:bg-violet-50 disabled:text-slate-500"
         />
       </label>
       <AppButton type="submit" disabled={!canSubmit} className="sm:mb-0.5">

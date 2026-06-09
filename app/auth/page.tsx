@@ -126,7 +126,7 @@ export default function AuthPage() {
               setError(null);
             }}
             className={`rounded-full px-3 py-2 text-sm font-semibold transition-[background-color,color,box-shadow,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-[0.98] ${
-              mode === "login" ? "bg-white text-zinc-950 shadow-[0_10px_24px_-20px_rgba(15,23,42,0.7)]" : "text-slate-600 hover:text-zinc-950"
+              mode === "login" ? "bg-white text-violet-950 shadow-[0_10px_24px_-20px_rgba(76,29,149,0.45)]" : "text-violet-700 hover:text-violet-950"
             }`}
           >
             Login
@@ -138,7 +138,7 @@ export default function AuthPage() {
               setError(null);
             }}
             className={`rounded-full px-3 py-2 text-sm font-semibold transition-[background-color,color,box-shadow,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-[0.98] ${
-              mode === "signup" ? "bg-white text-zinc-950 shadow-[0_10px_24px_-20px_rgba(15,23,42,0.7)]" : "text-slate-600 hover:text-zinc-950"
+              mode === "signup" ? "bg-white text-violet-950 shadow-[0_10px_24px_-20px_rgba(76,29,149,0.45)]" : "text-violet-700 hover:text-violet-950"
             }`}
           >
             Sign up

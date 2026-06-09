@@ -124,10 +124,10 @@ function taskPayloadFromForm(form: TaskFormState): AdminCreateTaskPayload | null
 
 function TaskPreview({ task }: { task: AdminPracticeTask }) {
   return (
-    <li className="rounded-2xl border border-slate-200/70 bg-white px-4 py-3">
+    <li className="rounded-2xl border border-violet-200/70 bg-white px-4 py-3 shadow-[0_12px_28px_-26px_rgba(76,29,149,0.28)]">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-zinc-950">{task.name}</p>
+          <p className="truncate text-sm font-semibold text-[#171326]">{task.name}</p>
           <p className="mt-1 text-xs text-slate-500">
             {formatLabel(task.category)} / {task.difficulty} / {task.duration} min
           </p>
@@ -270,11 +270,11 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-slate-50">
-      <header className="border-b border-slate-200 bg-white">
+    <div className="min-h-[100dvh] bg-[#fbfaff]">
+      <header className="border-b border-violet-200/70 bg-white/90 backdrop-blur">
         <div className="mx-auto flex w-full max-w-7xl flex-wrap items-center justify-between gap-4 px-4 py-4 sm:px-6 lg:px-8">
           <div>
-            <p className="text-sm font-semibold tracking-tight text-zinc-950">Practice Arena Admin</p>
+            <p className="text-sm font-semibold tracking-tight text-[#171326]">Practice Arena Admin</p>
             <p className="text-xs text-slate-500">Users, sessions, feedback, and task content</p>
           </div>
           <AppButton
@@ -294,7 +294,7 @@ export default function AdminPage() {
         <div
           role="tablist"
           aria-label="Admin panel sections"
-          className="flex gap-2 overflow-x-auto rounded-full border border-slate-200 bg-white p-1 shadow-[0_16px_40px_-34px_rgba(15,23,42,0.45)]"
+          className="flex gap-2 overflow-x-auto rounded-full border border-violet-200 bg-white p-1 shadow-[0_16px_40px_-34px_rgba(76,29,149,0.35)]"
         >
           {adminTabs.map((tab) => {
             const active = tab.id === activeTab;
@@ -310,8 +310,8 @@ export default function AdminPage() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`shrink-0 rounded-full px-4 py-2 text-sm font-semibold transition-[background-color,color,box-shadow,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-[0.98] ${
                   active
-                    ? "bg-zinc-950 text-white shadow-[0_14px_30px_-24px_rgba(15,23,42,0.9)]"
-                    : "text-slate-600 hover:bg-slate-100 hover:text-zinc-950"
+                    ? "bg-violet-900 text-white shadow-[0_14px_30px_-24px_rgba(76,29,149,0.9)]"
+                    : "text-violet-700 hover:bg-violet-50 hover:text-violet-950"
                 }`}
               >
                 {tab.label}
@@ -343,18 +343,18 @@ export default function AdminPage() {
                         onClick={() => setSelectedUserId(user.id)}
                         className={`w-full rounded-2xl border px-4 py-3 text-left transition-[background-color,border-color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-[0.99] ${
                           active
-                            ? "border-zinc-900 bg-zinc-950 text-white"
-                            : "border-slate-200 bg-white text-zinc-950 hover:border-slate-300"
+                            ? "border-violet-900 bg-violet-900 text-white"
+                            : "border-violet-200 bg-white text-[#171326] hover:border-violet-300 hover:bg-violet-50"
                         }`}
                       >
                         <div className="flex items-start justify-between gap-3">
                           <div className="min-w-0">
                             <p className="truncate text-sm font-semibold">{user.nickname || user.email}</p>
-                            <p className={`mt-1 truncate text-xs ${active ? "text-slate-300" : "text-slate-500"}`}>
+                            <p className={`mt-1 truncate text-xs ${active ? "text-violet-100" : "text-slate-500"}`}>
                               {user.email}
                             </p>
                           </div>
-                          <p className={`font-mono text-xs ${active ? "text-slate-300" : "text-slate-500"}`}>
+                          <p className={`font-mono text-xs ${active ? "text-amber-100" : "text-slate-500"}`}>
                             {user.sessionCount} sessions
                           </p>
                         </div>
@@ -380,14 +380,14 @@ export default function AdminPage() {
                       ["Completed", selectedOverview?.completedTaskCount ?? 0],
                       ["Feedback", selectedOverview?.feedbackCount ?? 0],
                     ].map(([label, value]) => (
-                      <div key={label} className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-                        <p className="text-xs font-medium uppercase tracking-[0.14em] text-slate-500">{label}</p>
-                        <p className="mt-2 font-mono text-2xl font-semibold text-zinc-950">{value}</p>
+                      <div key={label} className="rounded-2xl border border-violet-200 bg-violet-50 px-4 py-3">
+                        <p className="text-xs font-medium uppercase tracking-[0.14em] text-violet-500">{label}</p>
+                        <p className="mt-2 font-mono text-2xl font-semibold text-[#171326]">{value}</p>
                       </div>
                     ))}
                   </div>
-                  <div className="rounded-2xl border border-slate-200 bg-white p-4">
-                    <p className="text-sm font-semibold text-zinc-950">{selectedUser.email}</p>
+                  <div className="rounded-2xl border border-violet-200 bg-white p-4">
+                    <p className="text-sm font-semibold text-[#171326]">{selectedUser.email}</p>
                     <p className="mt-2 text-sm leading-6 text-slate-600">
                       {selectedUser.level} / {selectedUser.instrument} / joined {formatDate(selectedUser.createdAt)}
                     </p>
@@ -398,15 +398,15 @@ export default function AdminPage() {
                       <InlineStatus message="This user has no sessions yet." variant="muted" />
                     ) : (
                       selectedUser.sessions.map((session) => (
-                        <article key={session.id} className="rounded-2xl border border-slate-200 bg-white p-4">
+                        <article key={session.id} className="rounded-2xl border border-violet-200 bg-white p-4 shadow-[0_12px_30px_-28px_rgba(76,29,149,0.3)]">
                           <div className="flex flex-wrap items-start justify-between gap-3">
                             <div>
-                              <p className="text-sm font-semibold text-zinc-950">
+                              <p className="text-sm font-semibold text-[#171326]">
                                 {session.availableTime} min / {session.mood}
                               </p>
                               <p className="mt-1 text-xs text-slate-500">{formatDate(session.createdAt)}</p>
                             </div>
-                            <p className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">
+                            <p className="rounded-full bg-violet-50 px-3 py-1 text-xs font-medium text-violet-800 ring-1 ring-violet-200/70">
                               {session.feedback
                                 ? `Focus ${session.feedback.focusRating}, difficulty ${session.feedback.difficultyRating}`
                                 : "No feedback"}
@@ -415,8 +415,8 @@ export default function AdminPage() {
                           {session.goal ? <p className="mt-3 text-sm leading-6 text-slate-600">{session.goal}</p> : null}
                           <ul className="mt-3 grid gap-2">
                             {session.tasks.map((item) => (
-                              <li key={item.taskId} className="rounded-xl bg-slate-50 px-3 py-2 text-sm text-slate-700">
-                                <span className="font-semibold text-zinc-950">{item.task.name}</span>
+                              <li key={item.taskId} className="rounded-xl bg-violet-50 px-3 py-2 text-sm text-violet-900">
+                                <span className="font-semibold text-[#171326]">{item.task.name}</span>
                                 <span className="text-slate-500"> / {item.completed ? "completed" : "pending"}</span>
                               </li>
                             ))}

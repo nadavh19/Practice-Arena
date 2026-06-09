@@ -23,7 +23,7 @@ function ResultLink({
     <div className="rounded-[1.5rem] border border-slate-200/70 bg-slate-50 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold tracking-tight text-zinc-950">{label}</p>
+          <p className="text-sm font-semibold tracking-tight text-[#171326]">{label}</p>
           <p className="mt-1 max-w-full break-all text-xs leading-5 text-slate-500">{href}</p>
           {isFallback ? (
             <p className="mt-2 text-xs font-medium text-amber-700">Google search fallback</p>
@@ -126,7 +126,7 @@ export default function SongLearnerPage() {
         <section className="space-y-5">
           <SurfaceCard className="space-y-5">
             <div>
-              <p className="text-sm font-semibold tracking-tight text-zinc-950">Matched links</p>
+              <p className="text-sm font-semibold tracking-tight text-[#171326]">Matched links</p>
               <p className="mt-1 text-sm leading-6 text-slate-600">
                 Song Learner uses Google results through SerpApi and chooses the closest matching music domains.
               </p>
@@ -143,7 +143,7 @@ export default function SongLearnerPage() {
               </div>
             ) : (
               <div className="rounded-[1.5rem] border border-dashed border-slate-300 bg-slate-50/70 px-5 py-8 text-center">
-                <p className="text-sm font-semibold tracking-tight text-zinc-950">No song searched yet</p>
+                <p className="text-sm font-semibold tracking-tight text-[#171326]">No song searched yet</p>
                 <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-slate-600">
                   Enter a song and artist to get the first tab-style result and a listening link.
                 </p>
@@ -152,7 +152,7 @@ export default function SongLearnerPage() {
           </SurfaceCard>
 
           <SurfaceCard className="space-y-3">
-            <p className="text-sm font-semibold tracking-tight text-zinc-950">How to learn any song</p>
+            <p className="text-sm font-semibold tracking-tight text-[#171326]">How to learn any song</p>
             <p className="text-sm leading-6 text-slate-600">
               {result?.learningGuide ??
                 "Start by listening to the song a few times and marking the main sections. Learn the easiest recognizable part first, slow it down, and loop short phrases until your timing feels steady. Add the next section only when the current one feels comfortable, then practice the transitions and finish by playing along with the original track."}

@@ -24,7 +24,7 @@ export function HistoryStats({ stats }: HistoryStatsProps) {
           style={{ "--task-index": index } as CSSProperties}
         >
           <p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">{item.label}</p>
-          <p className="mt-3 font-mono text-3xl font-semibold tracking-tight text-zinc-950">{item.value}</p>
+          <p className="mt-3 font-mono text-3xl font-semibold tracking-tight text-[#171326]">{item.value}</p>
         </SurfaceCard>
       ))}
     </div>

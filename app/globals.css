@@ -1,8 +1,8 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #fbfaff;
+  --foreground: #171326;
 }
 
 @theme inline {
@@ -14,8 +14,8 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #f9fafb;
-    --foreground: #18181b;
+    --background: #fbfaff;
+    --foreground: #171326;
   }
 }
 
@@ -26,8 +26,8 @@ body {
 }
 
 ::selection {
-  background: #d1fae5;
-  color: #064e3b;
+  background: #facc15;
+  color: #2e1065;
 }
 
 button:not(:disabled),
@@ -67,7 +67,7 @@ button:disabled,
   isolation: isolate;
   overflow: hidden;
   background:
-    linear-gradient(115deg, rgba(15, 23, 42, 0.9), rgba(63, 13, 43, 0.72) 45%, rgba(15, 23, 42, 0.82)),
+    linear-gradient(115deg, rgba(46, 16, 101, 0.92), rgba(76, 29, 149, 0.74) 45%, rgba(23, 19, 38, 0.84)),
     url("/backgrounds/warm-fretboard.png");
   background-size: cover;
   background-position: center;
@@ -79,8 +79,8 @@ button:disabled,
   z-index: -1;
   content: "";
   background:
-    radial-gradient(circle at 18% 22%, rgba(16, 185, 129, 0.2), transparent 28%),
-    linear-gradient(90deg, rgba(15, 23, 42, 0.52), rgba(15, 23, 42, 0.18));
+    radial-gradient(circle at 18% 22%, rgba(250, 204, 21, 0.2), transparent 28%),
+    linear-gradient(90deg, rgba(46, 16, 101, 0.52), rgba(76, 29, 149, 0.18));
 }
 
 .protected-image-shell,
@@ -93,7 +93,7 @@ button:disabled,
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background: #f9fafb;
+  background: #fbfaff;
 }
 
 .protected-image-shell::before,
@@ -114,49 +114,49 @@ button:disabled,
 
 .protected-image-shell::before {
   background:
-    linear-gradient(180deg, rgba(249, 250, 251, 0.72), rgba(249, 250, 251, 0.96) 52%, #f9fafb),
+    linear-gradient(180deg, rgba(251, 250, 255, 0.72), rgba(251, 250, 255, 0.96) 52%, #fbfaff),
     url("/backgrounds/blue-equalizer-wave.png");
   opacity: 0.24;
 }
 
 .profile-page-background::before {
   background:
-    linear-gradient(115deg, rgba(249, 250, 251, 0.84), rgba(249, 250, 251, 0.72) 42%, rgba(249, 250, 251, 0.92)),
+    linear-gradient(115deg, rgba(251, 250, 255, 0.86), rgba(245, 243, 255, 0.72) 42%, rgba(251, 250, 255, 0.94)),
     url("/backgrounds/warm-fretboard.png");
   opacity: 0.92;
 }
 
 .new-session-page-background::before {
   background:
-    linear-gradient(120deg, rgba(249, 250, 251, 0.82), rgba(240, 253, 250, 0.72) 45%, rgba(249, 250, 251, 0.94)),
+    linear-gradient(120deg, rgba(251, 250, 255, 0.84), rgba(243, 240, 255, 0.74) 45%, rgba(251, 250, 255, 0.95)),
     url("/backgrounds/blue-equalizer-wave.png");
   opacity: 0.9;
 }
 
 .current-session-page-background::before {
   background:
-    linear-gradient(125deg, rgba(249, 250, 251, 0.82), rgba(248, 250, 252, 0.68) 48%, rgba(249, 250, 251, 0.92)),
+    linear-gradient(125deg, rgba(251, 250, 255, 0.84), rgba(243, 240, 255, 0.7) 48%, rgba(251, 250, 255, 0.93)),
     url("/backgrounds/dark-guitar-glow.png");
   opacity: 0.88;
 }
 
 .history-page-background::before {
   background:
-    linear-gradient(120deg, rgba(249, 250, 251, 0.9), rgba(248, 250, 252, 0.76) 48%, rgba(249, 250, 251, 0.96)),
+    linear-gradient(120deg, rgba(251, 250, 255, 0.9), rgba(245, 243, 255, 0.78) 48%, rgba(251, 250, 255, 0.96)),
     url("/backgrounds/blue-equalizer-wave.png");
   opacity: 0.86;
 }
 
 .coach-page-background::before {
   background:
-    linear-gradient(125deg, rgba(249, 250, 251, 0.9), rgba(240, 253, 250, 0.72) 44%, rgba(249, 250, 251, 0.96)),
+    linear-gradient(125deg, rgba(251, 250, 255, 0.9), rgba(243, 240, 255, 0.72) 44%, rgba(251, 250, 255, 0.96)),
     url("/backgrounds/dark-guitar-glow.png");
   opacity: 0.84;
 }
 
 .song-learner-page-background::before {
   background:
-    linear-gradient(120deg, rgba(249, 250, 251, 0.9), rgba(248, 250, 252, 0.72) 48%, rgba(249, 250, 251, 0.96)),
+    linear-gradient(120deg, rgba(251, 250, 255, 0.9), rgba(245, 243, 255, 0.72) 48%, rgba(251, 250, 255, 0.96)),
     url("/backgrounds/warm-fretboard.png");
   opacity: 0.86;
 }
@@ -167,7 +167,7 @@ button:disabled,
   overflow: hidden;
   color: #f8fafc;
   background:
-    linear-gradient(135deg, rgba(15, 23, 42, 0.92), rgba(24, 24, 27, 0.82)),
+    linear-gradient(135deg, rgba(46, 16, 101, 0.94), rgba(23, 19, 38, 0.86)),
     url("/backgrounds/dark-guitar-glow.png");
   background-size: cover;
   background-position: center;
@@ -178,7 +178,7 @@ button:disabled,
   inset: 0;
   z-index: -1;
   content: "";
-  background: radial-gradient(circle at 82% 20%, rgba(16, 185, 129, 0.18), transparent 30%);
+  background: radial-gradient(circle at 82% 20%, rgba(250, 204, 21, 0.16), transparent 30%);
 }
 
 .warm-accent-panel {
@@ -187,7 +187,7 @@ button:disabled,
   overflow: hidden;
   color: #f8fafc;
   background:
-    linear-gradient(135deg, rgba(15, 23, 42, 0.88), rgba(76, 29, 53, 0.78)),
+    linear-gradient(135deg, rgba(46, 16, 101, 0.9), rgba(91, 33, 182, 0.76)),
     url("/backgrounds/warm-fretboard.png");
   background-size: cover;
   background-position: center;
@@ -199,7 +199,7 @@ button:disabled,
   overflow: hidden;
   color: #f8fafc;
   background:
-    linear-gradient(135deg, rgba(15, 23, 42, 0.9), rgba(6, 78, 59, 0.68)),
+    linear-gradient(135deg, rgba(46, 16, 101, 0.92), rgba(91, 33, 182, 0.68)),
     url("/backgrounds/blue-equalizer-wave.png");
   background-size: cover;
   background-position: center;
@@ -211,7 +211,7 @@ button:disabled,
   inset: 0;
   z-index: -1;
   content: "";
-  background: radial-gradient(circle at 20% 15%, rgba(16, 185, 129, 0.16), transparent 32%);
+  background: radial-gradient(circle at 20% 15%, rgba(250, 204, 21, 0.14), transparent 32%);
 }
 
 @media (prefers-reduced-motion: reduce) {

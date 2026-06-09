@@ -8,7 +8,7 @@ export function PageHeading({ title, description, titleClassName }: PageHeadingP
   return (
     <header className="max-w-[65ch]">
       <h1
-        className={["text-3xl font-semibold leading-tight tracking-tight text-zinc-950", titleClassName ?? ""]
+        className={["text-3xl font-semibold leading-tight tracking-tight text-[#171326]", titleClassName ?? ""]
           .filter(Boolean)
           .join(" ")}
       >

@@ -92,7 +92,7 @@ export function ProtectedShell({ children }: ProtectedShellProps) {
 
   return (
     <div className={`${backgroundClassName} min-h-[100dvh]`}>
-      <header className="border-b border-slate-200/70 bg-white/85 backdrop-blur">
+      <header className="border-b border-violet-200/70 bg-white/85 backdrop-blur">
         <div className="mx-auto w-full max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between gap-3 lg:grid lg:grid-cols-[auto_1fr_auto] lg:gap-4">
             <Link
@@ -112,8 +112,8 @@ export function ProtectedShell({ children }: ProtectedShellProps) {
                     href={link.href}
                     className={`rounded-full px-3 py-2 text-sm font-medium transition-[background-color,color,box-shadow,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-[0.98] sm:px-3.5 ${
                       isActive
-                        ? "bg-zinc-950 text-white shadow-[0_14px_30px_-24px_rgba(15,23,42,0.9)]"
-                        : "text-slate-700 hover:bg-slate-100 hover:text-zinc-950"
+                        ? "bg-violet-900 text-white shadow-[0_14px_30px_-24px_rgba(76,29,149,0.9)]"
+                        : "text-violet-900 hover:bg-violet-50 hover:text-violet-950"
                     }`}
                   >
                     {link.label}
@@ -128,7 +128,7 @@ export function ProtectedShell({ children }: ProtectedShellProps) {
                 onClick={() => setMenuOpen((isOpen) => !isOpen)}
                 aria-expanded={menuOpen}
                 aria-controls="protected-mobile-menu"
-                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-800 shadow-[0_12px_28px_-24px_rgba(15,23,42,0.7)] transition-[background-color,border-color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-slate-300 hover:bg-slate-50 active:scale-[0.98] lg:hidden"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-violet-200 bg-white text-violet-950 shadow-[0_12px_28px_-24px_rgba(76,29,149,0.55)] transition-[background-color,border-color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-violet-300 hover:bg-violet-50 active:scale-[0.98] lg:hidden"
               >
                 <span className="sr-only">Toggle navigation menu</span>
                 <span className="flex flex-col gap-1.5" aria-hidden="true">
@@ -141,7 +141,7 @@ export function ProtectedShell({ children }: ProtectedShellProps) {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="hidden w-fit rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-800 shadow-[0_12px_28px_-24px_rgba(15,23,42,0.7)] transition-[background-color,border-color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-slate-300 hover:bg-slate-50 active:scale-[0.98] lg:inline-flex lg:justify-self-end"
+                className="hidden w-fit rounded-full border border-violet-200 bg-white px-4 py-2 text-sm font-semibold text-violet-950 shadow-[0_12px_28px_-24px_rgba(76,29,149,0.45)] transition-[background-color,border-color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-violet-300 hover:bg-violet-50 active:scale-[0.98] lg:inline-flex lg:justify-self-end"
               >
                 Log out
               </button>
@@ -151,7 +151,7 @@ export function ProtectedShell({ children }: ProtectedShellProps) {
           {menuOpen ? (
             <div
               id="protected-mobile-menu"
-              className="mt-3 rounded-[1.5rem] border border-slate-200/80 bg-white p-3 shadow-[0_20px_50px_-36px_rgba(15,23,42,0.65)] lg:hidden"
+              className="mt-3 rounded-[1.5rem] border border-violet-200/80 bg-white p-3 shadow-[0_20px_50px_-36px_rgba(76,29,149,0.48)] lg:hidden"
             >
               <nav className="grid gap-1">
                 {links.map((link) => {
@@ -161,7 +161,7 @@ export function ProtectedShell({ children }: ProtectedShellProps) {
                       key={link.href}
                       href={link.href}
                       className={`rounded-2xl px-4 py-3 text-sm font-medium transition-[background-color,color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-[0.99] ${
-                        isActive ? "bg-zinc-950 text-white" : "text-slate-700 hover:bg-slate-100 hover:text-zinc-950"
+                        isActive ? "bg-violet-900 text-white" : "text-violet-900 hover:bg-violet-50 hover:text-violet-950"
                       }`}
                     >
                       {link.label}
@@ -172,7 +172,7 @@ export function ProtectedShell({ children }: ProtectedShellProps) {
               <button
                 type="button"
                 onClick={handleLogout}
-                className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm font-semibold text-slate-800 transition-[background-color,border-color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-slate-300 hover:bg-white active:scale-[0.99]"
+                className="mt-2 w-full rounded-2xl border border-violet-200 bg-violet-50 px-4 py-3 text-left text-sm font-semibold text-violet-950 transition-[background-color,border-color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-violet-300 hover:bg-white active:scale-[0.99]"
               >
                 Log out
               </button>

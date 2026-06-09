@@ -38,12 +38,12 @@ export function ProfileForm({ error, form, onChange, onSubmit, saving, successMe
           title="Shape your practice profile"
           description="The generator uses these details to choose practice material that matches your current level and intent."
         />
-        <div className="rounded-[1.75rem] border border-slate-200/70 bg-white/90 p-6 shadow-[0_24px_55px_-40px_rgba(15,23,42,0.55)] backdrop-blur">
+        <div className="rounded-[1.75rem] border border-violet-200/70 bg-white/90 p-6 shadow-[0_24px_55px_-40px_rgba(76,29,149,0.35)] backdrop-blur">
           <p className="font-mono text-sm text-slate-500">Current setup</p>
-          <p className="mt-4 text-2xl font-semibold tracking-tight text-zinc-950">{form.nickname || "Unnamed player"}</p>
+          <p className="mt-4 text-2xl font-semibold tracking-tight text-[#171326]">{form.nickname || "Unnamed player"}</p>
           <div className="mt-5 flex flex-wrap gap-2">
-            <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-medium text-slate-700">Guitar</span>
-            <span className="rounded-full bg-emerald-50 px-3 py-1 text-xs font-medium text-emerald-800 ring-1 ring-emerald-200/70">
+            <span className="rounded-full bg-violet-50 px-3 py-1 text-xs font-medium text-violet-800 ring-1 ring-violet-200/70">Guitar</span>
+            <span className="rounded-full bg-amber-50 px-3 py-1 text-xs font-medium text-amber-900 ring-1 ring-amber-200/80">
               {form.level}
             </span>
           </div>
@@ -65,8 +65,8 @@ export function ProfileForm({ error, form, onChange, onSubmit, saving, successMe
           </FormField>
 
           <div className={readOnlyFieldClassName}>
-            <p className="text-xs font-medium uppercase tracking-[0.14em] text-slate-500">Instrument</p>
-            <p className="mt-1 text-sm font-semibold text-zinc-950">Guitar</p>
+            <p className="text-xs font-medium uppercase tracking-[0.14em] text-violet-500">Instrument</p>
+            <p className="mt-1 text-sm font-semibold text-[#171326]">Guitar</p>
           </div>
 
           <AppSelect

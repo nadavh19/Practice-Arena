@@ -59,8 +59,8 @@ export function SignupForm({
         />
       </FormField>
       <div className={readOnlyFieldClassName}>
-        <p className="text-xs font-medium uppercase tracking-[0.14em] text-slate-500">Instrument</p>
-        <p className="mt-1 text-sm font-semibold text-zinc-950">Guitar</p>
+        <p className="text-xs font-medium uppercase tracking-[0.14em] text-violet-500">Instrument</p>
+        <p className="mt-1 text-sm font-semibold text-[#171326]">Guitar</p>
       </div>
       <AppSelect
         label="Level"
