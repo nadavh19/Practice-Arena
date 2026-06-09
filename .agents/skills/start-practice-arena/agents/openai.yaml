@@ -1,0 +1,3 @@
+display_name: Start Practice Arena
+short_description: Start the Practice Arena dev server with npm run dev.
+default_prompt: Start the Practice Arena app locally and tell me the dev server URL.
