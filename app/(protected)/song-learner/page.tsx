@@ -22,9 +22,9 @@ function ResultLink({
   return (
     <div className="rounded-[1.5rem] border border-slate-200/70 bg-slate-50 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.85)]">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold tracking-tight text-zinc-950">{label}</p>
-          <p className="mt-1 truncate text-xs text-slate-500">{href}</p>
+          <p className="mt-1 max-w-full break-all text-xs leading-5 text-slate-500">{href}</p>
           {isFallback ? (
             <p className="mt-2 text-xs font-medium text-amber-700">Google search fallback</p>
           ) : null}
@@ -33,7 +33,9 @@ function ResultLink({
           href={href}
           target="_blank"
           rel="noreferrer"
-          className={getButtonClassName({ variant: isFallback ? "secondary" : "primary" })}
+          className={`${getButtonClassName({
+            variant: isFallback ? "secondary" : "primary",
+          })} w-fit shrink-0 whitespace-nowrap sm:w-[7.25rem]`}
         >
           Open link
         </a>

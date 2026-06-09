@@ -83,9 +83,12 @@ export function ProtectedShell({ children }: ProtectedShellProps) {
     <div className={`${backgroundClassName} min-h-[100dvh]`}>
       <header className="border-b border-slate-200/70 bg-white/85 backdrop-blur">
         <div className="mx-auto grid w-full max-w-7xl gap-4 px-4 py-4 sm:px-6 lg:grid-cols-[auto_1fr_auto] lg:items-center lg:px-8">
-          <Link href="/session/new" className="group w-fit">
-            <p className="text-sm font-semibold tracking-tight text-zinc-950">Practice Arena</p>
-            <p className="text-xs text-slate-500">Focused guitar sessions</p>
+          <Link
+            href="/session/new"
+            aria-label="Practice Arena"
+            className="group block h-auto w-auto bg-[url('/brand/main-pic.png')] bg-contain bg-center bg-no-repeat transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.02] active:scale-[0.98] sm:h-24 sm:w-[26rem]"
+          >
+            <span className="sr-only">Practice Arena</span>
           </Link>
           <nav className="flex flex-wrap items-center gap-2 lg:justify-center">
             {links.map((link) => {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { LoginForm } from "@/app/auth/components/login-form";
 import { SignupForm } from "@/app/auth/components/signup-form";
@@ -84,9 +85,16 @@ export default function AuthPage() {
     >
       <section className="page-section-reveal max-w-2xl space-y-8 lg:pl-[6vw]">
         <div className="space-y-5">
-          <p className="w-fit rounded-full border border-emerald-300/35 bg-emerald-300/15 px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-emerald-50 shadow-[inset_0_1px_0_rgba(255,255,255,0.16)]">
-            Practice Arena
-          </p>
+          <div className="w-fit rounded-[1.35rem] border border-white/70 bg-white/95 px-4 py-3 shadow-[0_24px_60px_-38px_rgba(2,6,23,0.8),inset_0_1px_0_rgba(255,255,255,0.9)] backdrop-blur">
+            <Image
+              src="/brand/main-pic.png"
+              alt="Practice Arena"
+              width={360}
+              height={118}
+              priority
+              className="h-12 w-auto object-contain sm:h-16"
+            />
+          </div>
           <h1 className="max-w-[10ch] text-5xl font-semibold leading-none tracking-tight text-white md:text-6xl">
             Build a better practice habit.
           </h1>
