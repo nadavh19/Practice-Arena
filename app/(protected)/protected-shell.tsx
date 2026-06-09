@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useSyncExternalStore, type ReactNode } from "react";
+import { useEffect, useState, useSyncExternalStore, type ReactNode } from "react";
 import { InlineStatus } from "@/app/components/ui/inline-status";
 import { PageShell } from "@/app/components/ui/page-shell";
 import { clearToken, getToken } from "@/lib/client/auth-storage";
@@ -61,6 +61,7 @@ function subscribeToTokenChanges(onStoreChange: () => void) {
 export function ProtectedShell({ children }: ProtectedShellProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
   const token = useSyncExternalStore(subscribeToTokenChanges, getToken, () => null);
 
   useEffect(() => {
@@ -68,6 +69,10 @@ export function ProtectedShell({ children }: ProtectedShellProps) {
       router.replace("/auth");
     }
   }, [router, token]);
+
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   if (!token) {
     return (
@@ -79,46 +84,100 @@ export function ProtectedShell({ children }: ProtectedShellProps) {
 
   const backgroundClassName = getPageBackgroundClass(pathname);
 
+  function handleLogout() {
+    clearToken();
+    clearCurrentSessionId();
+    router.replace("/auth");
+  }
+
   return (
     <div className={`${backgroundClassName} min-h-[100dvh]`}>
       <header className="border-b border-slate-200/70 bg-white/85 backdrop-blur">
-        <div className="mx-auto grid w-full max-w-7xl gap-4 px-4 py-4 sm:px-6 lg:grid-cols-[auto_1fr_auto] lg:items-center lg:px-8">
-          <Link
-            href="/session/new"
-            aria-label="Practice Arena"
-            className="group block h-auto w-auto bg-[url('/brand/main-pic.png')] bg-contain bg-center bg-no-repeat transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.02] active:scale-[0.98] sm:h-24 sm:w-[26rem]"
-          >
-            <span className="sr-only">Practice Arena</span>
-          </Link>
-          <nav className="flex flex-wrap items-center gap-2 lg:justify-center">
-            {links.map((link) => {
-              const isActive = pathname === link.href;
-              return (
-                <Link
-                  key={link.href}
-                  href={link.href}
-                  className={`rounded-full px-4 py-2 text-sm font-medium transition-[background-color,color,box-shadow,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-[0.98] ${
-                    isActive
-                      ? "bg-zinc-950 text-white shadow-[0_14px_30px_-24px_rgba(15,23,42,0.9)]"
-                      : "text-slate-700 hover:bg-slate-100 hover:text-zinc-950"
-                  }`}
-                >
-                  {link.label}
-                </Link>
-              );
-            })}
-          </nav>
-          <button
-            type="button"
-            onClick={() => {
-              clearToken();
-              clearCurrentSessionId();
-              router.replace("/auth");
-            }}
-            className="w-fit rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-800 shadow-[0_12px_28px_-24px_rgba(15,23,42,0.7)] transition-[background-color,border-color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-slate-300 hover:bg-slate-50 active:scale-[0.98] lg:justify-self-end"
-          >
-            Log out
-          </button>
+        <div className="mx-auto w-full max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between gap-3 lg:grid lg:grid-cols-[auto_1fr_auto] lg:gap-4">
+            <Link
+              href="/session/new"
+              aria-label="Practice Arena"
+              className="group block h-12 w-44 shrink-0 bg-[url('/brand/main-pic.png')] bg-contain bg-left bg-no-repeat transition-transform duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:scale-[1.02] active:scale-[0.98] sm:h-16 sm:w-64 lg:h-20 lg:w-80"
+            >
+              <span className="sr-only">Practice Arena</span>
+            </Link>
+
+            <nav className="hidden flex-wrap items-center gap-1.5 lg:flex lg:justify-center">
+              {links.map((link) => {
+                const isActive = pathname === link.href;
+                return (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={`rounded-full px-3 py-2 text-sm font-medium transition-[background-color,color,box-shadow,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-[0.98] sm:px-3.5 ${
+                      isActive
+                        ? "bg-zinc-950 text-white shadow-[0_14px_30px_-24px_rgba(15,23,42,0.9)]"
+                        : "text-slate-700 hover:bg-slate-100 hover:text-zinc-950"
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
+            </nav>
+
+            <div className="flex items-center justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setMenuOpen((isOpen) => !isOpen)}
+                aria-expanded={menuOpen}
+                aria-controls="protected-mobile-menu"
+                className="inline-flex h-11 w-11 items-center justify-center rounded-full border border-slate-200 bg-white text-slate-800 shadow-[0_12px_28px_-24px_rgba(15,23,42,0.7)] transition-[background-color,border-color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-slate-300 hover:bg-slate-50 active:scale-[0.98] lg:hidden"
+              >
+                <span className="sr-only">Toggle navigation menu</span>
+                <span className="flex flex-col gap-1.5" aria-hidden="true">
+                  <span className="block h-0.5 w-5 rounded-full bg-current" />
+                  <span className="block h-0.5 w-5 rounded-full bg-current" />
+                  <span className="block h-0.5 w-5 rounded-full bg-current" />
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="hidden w-fit rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-800 shadow-[0_12px_28px_-24px_rgba(15,23,42,0.7)] transition-[background-color,border-color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-slate-300 hover:bg-slate-50 active:scale-[0.98] lg:inline-flex lg:justify-self-end"
+              >
+                Log out
+              </button>
+            </div>
+          </div>
+
+          {menuOpen ? (
+            <div
+              id="protected-mobile-menu"
+              className="mt-3 rounded-[1.5rem] border border-slate-200/80 bg-white p-3 shadow-[0_20px_50px_-36px_rgba(15,23,42,0.65)] lg:hidden"
+            >
+              <nav className="grid gap-1">
+                {links.map((link) => {
+                  const isActive = pathname === link.href;
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      className={`rounded-2xl px-4 py-3 text-sm font-medium transition-[background-color,color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-[0.99] ${
+                        isActive ? "bg-zinc-950 text-white" : "text-slate-700 hover:bg-slate-100 hover:text-zinc-950"
+                      }`}
+                    >
+                      {link.label}
+                    </Link>
+                  );
+                })}
+              </nav>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-left text-sm font-semibold text-slate-800 transition-[background-color,border-color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] hover:border-slate-300 hover:bg-white active:scale-[0.99]"
+              >
+                Log out
+              </button>
+            </div>
+          ) : null}
         </div>
       </header>
       <main className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8 lg:py-10">{children}</main>
