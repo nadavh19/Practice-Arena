@@ -18,6 +18,7 @@ const links = [
   { href: "/session/current", label: "Current Session" },
   { href: "/history", label: "History" },
   { href: "/coach", label: "Coach" },
+  { href: "/song-learner", label: "Song Learner" },
 ];
 
 function getPageBackgroundClass(pathname: string) {
@@ -39,6 +40,10 @@ function getPageBackgroundClass(pathname: string) {
 
   if (pathname === "/coach") {
     return "coach-page-background";
+  }
+
+  if (pathname === "/song-learner") {
+    return "song-learner-page-background";
   }
 
   return "protected-image-shell";

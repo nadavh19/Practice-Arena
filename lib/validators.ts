@@ -71,6 +71,16 @@ export const chatRequestSchema = z.object({
   messages: z.array(chatMessageSchema).min(1).max(20),
 });
 
+export const songLearnerSchema = z.object({
+  title: z.string().trim().min(1).max(160),
+  artist: z
+    .string()
+    .trim()
+    .max(160)
+    .transform((value) => (value ? value : undefined))
+    .optional(),
+});
+
 const optionalTextSchema = z
   .string()
   .trim()
@@ -110,4 +120,5 @@ export type GenerateSessionInput = z.infer<typeof generateSessionSchema>;
 export type CompleteSessionInput = z.infer<typeof completeSessionSchema>;
 export type ChatMessageInput = z.infer<typeof chatMessageSchema>;
 export type ChatRequestInput = z.infer<typeof chatRequestSchema>;
+export type SongLearnerInput = z.infer<typeof songLearnerSchema>;
 export type AdminCreateTaskInput = z.infer<typeof adminCreateTaskSchema>;

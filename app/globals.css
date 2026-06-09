@@ -88,7 +88,8 @@ button:disabled,
 .new-session-page-background,
 .current-session-page-background,
 .history-page-background,
-.coach-page-background {
+.coach-page-background,
+.song-learner-page-background {
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -100,7 +101,8 @@ button:disabled,
 .new-session-page-background::before,
 .current-session-page-background::before,
 .history-page-background::before,
-.coach-page-background::before {
+.coach-page-background::before,
+.song-learner-page-background::before {
   position: fixed;
   inset: 0;
   z-index: -1;
@@ -150,6 +152,13 @@ button:disabled,
     linear-gradient(125deg, rgba(249, 250, 251, 0.9), rgba(240, 253, 250, 0.72) 44%, rgba(249, 250, 251, 0.96)),
     url("/backgrounds/dark-guitar-glow.png");
   opacity: 0.84;
+}
+
+.song-learner-page-background::before {
+  background:
+    linear-gradient(120deg, rgba(249, 250, 251, 0.9), rgba(248, 250, 252, 0.72) 48%, rgba(249, 250, 251, 0.96)),
+    url("/backgrounds/warm-fretboard.png");
+  opacity: 0.86;
 }
 
 .music-accent-panel {

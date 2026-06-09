@@ -146,3 +146,16 @@ export type CoachChatMessage = {
 export type CoachChatResponse = {
   reply: string;
 };
+
+export type SongLearnerRequest = {
+  title: string;
+  artist?: string;
+};
+
+export type SongLearnerResponse = {
+  ultimateGuitarUrl: string;
+  youtubeUrl: string;
+  ultimateGuitarIsFallback: boolean;
+  youtubeIsFallback: boolean;
+  learningGuide: string;
+};
