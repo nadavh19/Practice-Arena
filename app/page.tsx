@@ -25,7 +25,7 @@ export default function HomePage() {
         return;
       }
 
-      router.replace(profileResult.data.nickname ? "/session/new" : "/profile");
+      router.replace(profileResult.data.goals.trim() ? "/session/new" : "/profile");
     }
 
     void routeUser();
