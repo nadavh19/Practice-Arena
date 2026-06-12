@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { apiGet, apiPost } from "@/lib/client/api-client";
-import type { UserLevel, UserProfile } from "@/lib/client/types";
+import type { SessionStats, UserLevel, UserProfile } from "@/lib/client/types";
 
 type ProfileFormState = {
   goals: string;
@@ -10,12 +10,29 @@ type ProfileFormState = {
   nickname: string;
 };
 
+type ProfileMode = "edit" | "view";
+
+function getProfileFormState(profile: UserProfile): ProfileFormState {
+  return {
+    goals: profile.goals,
+    level: profile.level,
+    nickname: profile.nickname ?? "",
+  };
+}
+
+function isProfileComplete(profile: UserProfile) {
+  return profile.goals.trim().length > 0;
+}
+
 export function useProfileForm() {
   const [form, setForm] = useState<ProfileFormState>({
     goals: "",
     level: "beginner",
     nickname: "",
   });
+  const [mode, setMode] = useState<ProfileMode>("view");
+  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [stats, setStats] = useState<SessionStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +44,10 @@ export function useProfileForm() {
     async function loadProfile() {
       setLoading(true);
       setError(null);
-      const result = await apiGet<UserProfile>("/api/profile");
+      const [profileResult, statsResult] = await Promise.all([
+        apiGet<UserProfile>("/api/profile"),
+        apiGet<SessionStats>("/api/session/stats"),
+      ]);
 
       if (!active) {
         return;
@@ -35,16 +55,20 @@ export function useProfileForm() {
 
       setLoading(false);
 
-      if (!result.success) {
-        setError(result.error.message);
+      if (!profileResult.success) {
+        setError(profileResult.error.message);
         return;
       }
 
-      setForm({
-        goals: result.data.goals,
-        level: result.data.level,
-        nickname: result.data.nickname ?? "",
-      });
+      if (!statsResult.success) {
+        setError(statsResult.error.message);
+        return;
+      }
+
+      setProfile(profileResult.data);
+      setStats(statsResult.data);
+      setForm(getProfileFormState(profileResult.data));
+      setMode(isProfileComplete(profileResult.data) ? "view" : "edit");
     }
 
     void loadProfile();
@@ -84,16 +108,45 @@ export function useProfileForm() {
       return;
     }
 
+    setProfile(result.data);
+    setForm(getProfileFormState(result.data));
+    setMode("view");
     setSuccessMessage("Profile updated.");
   }
 
+  function startEditing() {
+    if (profile) {
+      setForm(getProfileFormState(profile));
+    }
+
+    setSuccessMessage(null);
+    setError(null);
+    setMode("edit");
+  }
+
+  function cancelEditing() {
+    if (!profile || !isProfileComplete(profile)) {
+      return;
+    }
+
+    setForm(getProfileFormState(profile));
+    setSuccessMessage(null);
+    setError(null);
+    setMode("view");
+  }
+
   return {
+    cancelEditing,
     error,
     form,
     handleSubmit,
     loading,
+    mode,
+    profile,
     saving,
     setForm,
+    startEditing,
+    stats,
     successMessage,
   };
 }
