@@ -23,18 +23,29 @@ enum UserRole {
   admin
 }
 
-model User {
-  id         String    @id @default(uuid())
-  email      String    @unique
-  password   String
-  nickname   String?
-  instrument String
-  level      String
-  goals      String
-  role       UserRole  @default(user)
-  createdAt  DateTime  @default(now())
+enum NotificationStatus {
+  skipped
+  generated
+  sent
+  failed
+}
 
-  sessions   Session[]
+model User {
+  id                    String    @id @default(uuid())
+  email                 String    @unique
+  password              String
+  nickname              String?
+  instrument            String
+  level                 String
+  goals                 String
+  role                  UserRole  @default(user)
+  emailRemindersEnabled Boolean   @default(true)
+  emailUnsubscribedAt   DateTime?
+  emailUnsubscribeToken String?   @unique
+  createdAt             DateTime  @default(now())
+
+  sessions         Session[]
+  notificationLogs NotificationLog[]
 }
 
 model Session {
@@ -87,4 +98,35 @@ model Feedback {
   focusRating      Int
 
   session          Session  @relation(fields: [sessionId], references: [id])
+}
+
+model NotificationSettings {
+  id             String   @id @default("global")
+  enabled        Boolean  @default(false)
+  activeDays     String   @default("0,1,2,3,4,5,6")
+  maxUsersPerRun Int      @default(100)
+  dryRun         Boolean  @default(true)
+  aiEnabled      Boolean  @default(true)
+  fallbackEnabled Boolean @default(true)
+  subjectTemplate String  @default("Your Practice Arena reminder")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model NotificationLog {
+  id                String             @id @default(uuid())
+  userId            String
+  sendDate          DateTime
+  status            NotificationStatus @default(generated)
+  providerMessageId String?
+  subject           String?
+  bodyPreview       String?
+  error             String?
+  createdAt         DateTime           @default(now())
+
+  user              User               @relation(fields: [userId], references: [id])
+
+  @@unique([userId, sendDate])
+  @@index([sendDate])
+  @@index([status])
 }

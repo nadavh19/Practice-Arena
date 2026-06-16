@@ -49,12 +49,23 @@ Optional `.env` values:
 3. `GEMINI_MAX_OUTPUT_TOKENS` (defaults to `2048`, clamped between `512` and `8192`)
 4. `ADMIN_EMAIL` (defaults to `admin@local` when seeding)
 5. `ADMIN_PASSWORD` (defaults to `admin` when seeding)
+6. `RESEND_API_KEY` (required only when email reminders are not in dry-run mode)
+7. `EMAIL_FROM` (defaults to `Practice Arena <onboarding@resend.dev>`)
+8. `APP_BASE_URL` (defaults to `http://localhost:3000`; used for unsubscribe links)
+9. `CRON_SECRET` (required for Vercel Cron to call `/api/cron/daily-reminders`)
 
 `JWT_SECRET` note:
 
 1. `JWT_SECRET` is one app-level secret string (server-only).
 2. A JWT token is created per user auth action (`signup` / `login`) using that secret.
 3. If `JWT_SECRET` is missing, auth routes cannot issue valid tokens.
+
+Supabase database URL note:
+
+1. `DATABASE_URL` should be the pooled Supabase app/runtime URL, usually port `6543`.
+2. `SUPABASE_POSTGRES_URL_NON_POOLING` should be the direct migration URL, usually port `5432`.
+3. Prisma CLI commands use `SUPABASE_POSTGRES_URL_NON_POOLING` first through `prisma.config.ts`.
+4. The Next.js app runtime uses `DATABASE_URL` first through `lib/prisma.ts`.
 
 Useful commands:
 
@@ -80,6 +91,18 @@ Optional:
 3. `GEMINI_MAX_OUTPUT_TOKENS`
 4. `ADMIN_EMAIL`
 5. `ADMIN_PASSWORD`
+6. `RESEND_API_KEY`
+7. `EMAIL_FROM`
+8. `APP_BASE_URL`
+9. `CRON_SECRET`
+
+Daily email reminders:
+
+1. Reminders are disabled by default and start in dry-run mode.
+2. Missing `GEMINI_API_KEY` falls back to deterministic reminder text when fallback reminders are enabled.
+3. Missing `RESEND_API_KEY` prevents real sends but does not affect dry-run generation.
+4. Missing `CRON_SECRET` makes the cron endpoint reject requests.
+5. In production, set `APP_BASE_URL` to the deployed app URL so unsubscribe links point to the right host.
 
 Apply to both `Preview` and `Production` (and `Development` if needed).
 
@@ -142,6 +165,23 @@ Lists reusable practice tasks.
 
 5. `POST /api/admin/tasks`
 Creates a reusable practice task.
+
+6. `GET /api/admin/notifications`
+Returns global daily reminder settings.
+
+7. `POST /api/admin/notifications`
+Updates global daily reminder settings.
+
+8. `POST /api/admin/notifications/test`
+Generates or sends a test reminder to the admin account.
+
+### 7) Daily Email Reminders
+
+1. `GET /api/cron/daily-reminders`
+Runs the daily reminder job. Requires `Authorization: Bearer <CRON_SECRET>`.
+
+2. `GET /api/notifications/unsubscribe?token=...`
+Disables reminder emails for the matching user.
 
 ## Project Architecture (Simple)
 
@@ -259,6 +299,9 @@ Current `User` key fields:
 5. `level`
 6. `goals`
 7. `role` (`user` or `admin`, defaults to `user`)
+8. `emailRemindersEnabled` (defaults to `true`)
+9. `emailUnsubscribedAt` (nullable unsubscribe timestamp)
+10. `emailUnsubscribeToken` (nullable unique token for unsubscribe links)
 
 `nickname` is not unique and can be cleared (`null`) through profile update.
 

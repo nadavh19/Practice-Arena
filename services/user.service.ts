@@ -44,6 +44,11 @@ export async function createUser(input: SignupInput) {
 export async function getUserByEmail(email: LoginInput["email"]) {
   return prisma.user.findUnique({
     where: { email },
+    select: {
+      id: true,
+      password: true,
+      role: true,
+    },
   });
 }
 
