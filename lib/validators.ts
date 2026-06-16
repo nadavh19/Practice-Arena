@@ -112,6 +112,20 @@ export const adminCreateTaskSchema = z.object({
   artistName: optionalTextSchema,
 });
 
+export const notificationSettingsSchema = z.object({
+  enabled: z.boolean(),
+  activeDays: z
+    .array(z.int().min(0).max(6))
+    .min(1)
+    .max(7)
+    .transform((days) => Array.from(new Set(days)).sort((a, b) => a - b).join(",")),
+  maxUsersPerRun: z.int().min(1).max(500),
+  dryRun: z.boolean(),
+  aiEnabled: z.boolean(),
+  fallbackEnabled: z.boolean(),
+  subjectTemplate: z.string().trim().min(1).max(160),
+});
+
 export type SignupInput = z.infer<typeof signupSchema>;
 export type LoginInput = z.infer<typeof loginSchema>;
 export type AdminLoginInput = z.infer<typeof adminLoginSchema>;
@@ -122,3 +136,4 @@ export type ChatMessageInput = z.infer<typeof chatMessageSchema>;
 export type ChatRequestInput = z.infer<typeof chatRequestSchema>;
 export type SongLearnerInput = z.infer<typeof songLearnerSchema>;
 export type AdminCreateTaskInput = z.infer<typeof adminCreateTaskSchema>;
+export type NotificationSettingsInput = z.infer<typeof notificationSettingsSchema>;

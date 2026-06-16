@@ -70,10 +70,6 @@ export function ProtectedShell({ children }: ProtectedShellProps) {
     }
   }, [router, token]);
 
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [pathname]);
-
   if (!token) {
     return (
       <PageShell as="main" width="5xl" fullHeight className="flex items-center justify-center px-6 py-10">
@@ -157,12 +153,13 @@ export function ProtectedShell({ children }: ProtectedShellProps) {
                 {links.map((link) => {
                   const isActive = pathname === link.href;
                   return (
-                    <Link
-                      key={link.href}
-                      href={link.href}
-                      className={`rounded-2xl px-4 py-3 text-sm font-medium transition-[background-color,color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-[0.99] ${
-                        isActive ? "bg-violet-900 text-white" : "text-violet-900 hover:bg-violet-50 hover:text-violet-950"
-                      }`}
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    onClick={() => setMenuOpen(false)}
+                    className={`rounded-2xl px-4 py-3 text-sm font-medium transition-[background-color,color,transform] duration-300 ease-[cubic-bezier(0.16,1,0.3,1)] active:scale-[0.99] ${
+                      isActive ? "bg-violet-900 text-white" : "text-violet-900 hover:bg-violet-50 hover:text-violet-950"
+                    }`}
                     >
                       {link.label}
                     </Link>
