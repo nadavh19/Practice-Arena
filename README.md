@@ -1,279 +1,400 @@
 # Practice Arena
 
-Practice Arena is a Next.js + Prisma backend for a personalized music practice flow:
+Practice Arena is a Next.js 16 application for planning guitar practice, completing and reviewing saved sessions, asking an AI music coach for help, finding song-learning resources, and training interval recognition with a sampled-piano ear-training game.
 
-1. Signup / login
-2. Update profile
-3. Generate a practice session
-4. Complete the session with feedback
+The application currently supports:
 
-## Onboarding (Read First)
+- User signup, login, profile editing, and JWT-protected pages.
+- Rule-based guitar practice-session generation using level, mood, available time, goals, and recent feedback.
+- Current-session task completion with difficulty and focus ratings.
+- Session history, aggregate statistics, and completion tracking.
+- A Gemini-powered music-practice coach.
+- Song-resource lookup through SerpApi.
+- A five-level music-theory interval game with persistent high scores.
+- Separate admin authentication, user inspection, and reusable-task management.
 
-Start here before editing code:
+## Onboarding
 
-1. `docs/architecture-routing.md` - UI vs API boundaries, route ownership matrix, and debug entry points.
-2. `README.md` (this file) - setup, API overview, and implementation notes.
-3. `docs/schema.md` - data model and entity relationships.
+Read these files before making architectural changes:
 
-## Tasks
-
-implement phase 3 - check about if i should do cookies or not
-
+1. `README.md` — current features, setup, APIs, algorithms, and limitations.
+2. `docs/architecture-routing.md` — UI/API boundaries and route ownership.
+3. `docs/schema.md` — additional data-model background; confirm details against `prisma/schema.prisma`, which is the source of truth.
 
 ## Quick Start
 
 ```bash
-# Install
 npm install
-
-# Run migrations
-npx prisma migrate dev
-
-# Seed tasks
-npm run prisma:seed
-
-# Start app
 npm run dev
 ```
 
-Required `.env` values:
+Open `http://localhost:3000`.
 
-1. `DATABASE_URL`
-2. `JWT_SECRET`
-3. `GEMINI_API_KEY`
+The root route checks the JWT stored in the browser, loads the profile, and redirects to `/auth`, `/profile`, or `/session/new` as appropriate.
 
-Optional `.env` values:
+## Environment Variables
 
-1. `GEMINI_MODEL` (defaults to `gemini-2.5-flash`)
-2. `GEMINI_FALLBACK_MODELS` (defaults to `gemini-2.5-flash-lite,gemini-2.0-flash-lite`)
-3. `GEMINI_MAX_OUTPUT_TOKENS` (defaults to `2048`, clamped between `512` and `8192`)
-4. `ADMIN_EMAIL` (defaults to `admin@local` when seeding)
-5. `ADMIN_PASSWORD` (defaults to `admin` when seeding)
+### Core runtime
 
-`JWT_SECRET` note:
+The application needs:
 
-1. `JWT_SECRET` is one app-level secret string (server-only).
-2. A JWT token is created per user auth action (`signup` / `login`) using that secret.
-3. If `JWT_SECRET` is missing, auth routes cannot issue valid tokens.
+- `DATABASE_URL` — pooled PostgreSQL connection used by the running application. The runtime also accepts `SUPABASE_POSTGRES_PRISMA_URL` or `SUPABASE_POSTGRES_URL` as fallbacks.
+- `JWT_SECRET` — server-only secret used to sign and verify seven-day user and admin JWTs.
 
-Useful commands:
+### Optional features
+
+- `GEMINI_API_KEY` — enables the AI Coach.
+- `GEMINI_MODEL` — defaults to `gemini-2.5-flash`.
+- `GEMINI_FALLBACK_MODELS` — comma-separated fallback models; defaults to `gemini-2.5-flash-lite,gemini-2.0-flash-lite`.
+- `GEMINI_MAX_OUTPUT_TOKENS` — defaults to `2048` and is clamped between `512` and `8192`.
+- `SERPAPI_API_KEY` — enables Song Learner searches for Ultimate Guitar and YouTube results.
+- `ADMIN_EMAIL` — admin account used by the seed script; defaults to `admin@local`.
+- `ADMIN_PASSWORD` — admin password used by the seed script; defaults to `admin`.
+- `NEXT_PUBLIC_THEORY_GAME_LOCAL_PROGRESS=true` — runs Theory Game progress from browser localStorage instead of the database. This also allows only `/theory-game` through the protected shell without a JWT for isolated local testing.
+
+### Prisma maintenance
+
+- `SUPABASE_POSTGRES_URL_NON_POOLING` — preferred direct connection for Prisma CLI migrations.
+- `DIRECT_DATABASE_URL` — optional direct-connection fallback.
+
+Do not commit `.env` values or expose database, JWT, Gemini, SerpApi, or admin secrets to client code.
+
+## Useful Commands
 
 ```bash
-npm run lint
-npm run build
-npx prisma generate
-npx prisma studio --port 5555 --browser none
+npm install                 # install dependencies
+npm run dev                 # start the Next.js development server
+npm run lint                # run ESLint
+npm run test:algorithms     # run practice and theory algorithm tests
+npm run build               # generate Prisma Client and create a production build
+npm run prisma:seed         # create or update the configured admin account
 ```
 
-## Deployment Environment (Vercel)
+Use these only for their specific maintenance cases:
 
-Set these in Vercel Project Settings -> Environment Variables:
+```bash
+npx prisma generate         # after changing prisma/schema.prisma
+npx prisma migrate deploy   # deploy an already-reviewed, committed migration
+```
 
-1. `DATABASE_URL`
-2. `JWT_SECRET`
-3. `GEMINI_API_KEY`
+`prisma migrate deploy` uses the non-pooled URL when `SUPABASE_POSTGRES_URL_NON_POOLING` is configured. Do not use destructive reset or schema-push commands against the shared database.
 
-Optional:
+## User-Facing Routes
 
-1. `GEMINI_MODEL`
-2. `GEMINI_FALLBACK_MODELS`
-3. `GEMINI_MAX_OUTPUT_TOKENS`
-4. `ADMIN_EMAIL`
-5. `ADMIN_PASSWORD`
+Public routes:
 
-Apply to both `Preview` and `Production` (and `Development` if needed).
+- `/` — client-side profile-aware redirect.
+- `/auth` — user login and signup.
+- `/admin/login` — separate admin login.
+- `/admin` — admin dashboard; protected by the admin token.
 
-## Current API Flow
+Regular-user protected navigation:
 
-### 1) Auth
+- `/profile` — view or edit nickname, level, and goals; also shows practice statistics.
+- `/session/new` — choose mood, available time, and an optional session goal.
+- `/session/current` — complete tasks from the session ID stored in localStorage and submit feedback.
+- `/history` — session history and aggregate statistics.
+- `/coach` — AI music-practice assistant.
+- `/song-learner` — tab/listening search and learning guide.
+- `/theory-game` — interval ear-training levels, phases, rounds, and high scores.
 
-1. `POST /api/auth/signup`
-Creates user and returns JWT token.
+The protected shell is client-side. It reads `practiceArenaToken` from localStorage and redirects missing or invalid sessions to `/auth`. The current generated session ID is stored separately as `practiceArenaCurrentSessionId`.
 
-2. `POST /api/auth/login`
-Validates credentials and returns JWT token.
+## Main Practice Flow
 
-Admin accounts are DB-backed users with role `admin`, but they must sign in through the admin auth route.
+1. A user signs up or logs in and receives a JWT.
+2. The client stores the token in localStorage and sends it as `Authorization: Bearer <token>`.
+3. The user completes or edits a guitar profile with a level and goals.
+4. The user chooses a mood, available time from 5 to 240 minutes, and an optional session goal.
+5. The server loads the profile, reusable tasks, and up to five recent feedback records.
+6. Pure algorithms calculate the target difficulty, split the available time, score candidate tasks, and produce a deterministic plan.
+7. The server saves the `Session` and its `SessionTask` rows. The client stores the returned session ID.
+8. The current-session page loads history, locates that session ID, and displays its assigned tasks.
+9. The user selects completed tasks and submits difficulty/focus ratings from 1 to 5.
+10. The server marks valid assigned tasks complete, upserts feedback, and the client clears the current-session ID.
 
-Use returned token in protected routes:
+### Practice-session algorithm
 
-`Authorization: Bearer <token>`
+- `computeDifficulty.ts` maps beginner, intermediate, and advanced profiles to a target task difficulty.
+- `splitTimeBlocks.ts` splits the requested duration into practice-sized blocks.
+- `selectTasks.ts` scores tasks using difficulty, mood, session/profile goals, recent feedback, and category variation.
+- `generatePracticeSession.ts` orchestrates the calculation and returns the selected tasks and planning metadata.
 
-### 2) Profile (Protected)
+Recent feedback can nudge later sessions easier or harder. Low focus can favor simpler categories, while an explicit session goal receives stronger priority than the saved profile goals.
 
-1. `GET /api/profile`
-Returns current user profile.
+## Admin Dashboard
 
-2. `POST /api/profile`
-Updates profile fields (`nickname`, `instrument`, `level`, `goals`).
-`instrument` is currently locked to `guitar`.
+The admin interface uses the same `User` table as the regular application, but only records with `role = admin` can authenticate through `/admin/login` or call the admin APIs. Run `npm run prisma:seed` to create or update the configured admin account using `ADMIN_EMAIL` and `ADMIN_PASSWORD`.
 
-### 3) Session (Protected)
+Admin authentication is separate from regular-user authentication:
 
-1. `POST /api/session/generate`
-Builds a practice plan from user level + available time and saves it.
+- A successful admin login returns the same seven-day JWT format used elsewhere, signed with `JWT_SECRET`.
+- The browser stores it under `practiceArenaAdminToken`, separately from the regular-user token.
+- `/admin` checks for that token client-side and redirects to `/admin/login` when it is missing.
+- Every protected admin API independently verifies the bearer token against the database and checks that the authenticated user still has the `admin` role. A token in localStorage alone does not grant API access.
+- A `401` response clears the stored admin token and redirects the browser to `/admin/login`.
 
-2. `POST /api/session/complete`
-Marks selected tasks as completed and stores feedback ratings.
+The dashboard has three areas:
 
-### 4) Utility
+1. **Users** loads regular users and reusable tasks in parallel, then selects the newest user by default. Each user summary derives session, assigned-task, completed-task, and feedback counts from saved sessions. Selecting a user loads their profile, goals, sessions newest first, assigned tasks, completion state, and difficulty/focus feedback.
+2. **Task inventory** lists reusable tasks newest first. These tasks form the pool used by practice-session generation.
+3. **Add task** creates a validated reusable task. Name, difficulty, category, duration, and instrument are stored alongside optional description, key, BPM, tablature, chords, scale, song name, and artist name. Duration must be 1–240 minutes and an optional BPM must be 1–300.
 
-1. `GET /api/test`
-Simple DB connectivity check.
+The current admin interface can inspect data and add tasks. It does not edit or delete users, sessions, feedback, or existing tasks.
 
-### 5) AI Coach (Protected)
+### Reminder data model (not operational)
 
-1. `POST /api/chat`
-Answers music-practice and Practice Arena data questions using the user's profile, recent saved sessions, task details, feedback, and stats. Requires `GEMINI_API_KEY` on the server.
+The Prisma schema contains data structures for a future daily-email reminder system, but no reminder workflow currently runs:
 
-### 6) Admin (Admin Protected)
+- `User.emailRemindersEnabled` defaults to `true` and represents a future per-user preference.
+- `User.emailUnsubscribedAt` can record when a user unsubscribes.
+- `User.emailUnsubscribeToken` is nullable and unique so a future unsubscribe link can identify one user without exposing their ID.
+- `NotificationSettings` is shaped as global configuration. Its default ID is `global`; reminders default to disabled, all seven day numbers (`0,1,2,3,4,5,6`), at most 100 users per run, dry-run mode enabled, AI and fallback generation enabled, and the subject template `Your Practice Arena reminder`.
+- `NotificationLog` can record one result per user and send date. Its status is `skipped`, `generated`, `sent`, or `failed`; optional fields can store the provider message ID, subject, body preview, or error. It also stores creation time, relates back to `User`, enforces the user/date uniqueness constraint, and indexes send date and status.
 
-1. `POST /api/admin/auth/login`
-Validates an admin account and returns an admin JWT token.
+These schema defaults do not create a `NotificationSettings` row and do not send email. This branch has no reminder scheduler, cron route, email provider integration, message-generation service, unsubscribe endpoint, admin reminder controls, or user reminder controls.
 
-2. `GET /api/admin/users`
-Lists regular users with practice activity counts.
+## Music Theory Interval Game
 
-3. `GET /api/admin/users/[userId]`
-Returns one regular user with sessions, assigned tasks, completion state, and feedback.
+The Theory Game is a client-interactive ear-training feature at `/theory-game`. Static curriculum rules live in `lib/theory-game`, piano playback runs in the browser, and authenticated best scores are stored through the API and Prisma.
 
-4. `GET /api/admin/tasks`
-Lists reusable practice tasks.
+### Hierarchy
 
-5. `POST /api/admin/tasks`
-Creates a reusable practice task.
+The hierarchy is:
 
-## Project Architecture (Simple)
+```text
+Level
+└── Phase
+    └── Round
+```
 
-1. **Routes** (`app/api/.../route.ts`)
-Handle HTTP only: parse request, validate, call service, return response.
+- A **level** contains generated phases and displays the sum of the user's phase high scores.
+- A **phase** has a fixed answer bank, round count, point value, stable ID, and individual high score.
+- A **round** contains one hidden ascending pair of piano notes and one correct interval answer.
+
+All levels and phases are unlocked and can be replayed any number of times.
+
+### Interval bank
+
+The game covers every chromatic distance from unison through one octave:
 
-2. **Services** (`services/*.service.ts`)
-Contain business logic and DB orchestration.
+| ID | Answer label | Semitones |
+| --- | --- | ---: |
+| `p1` | Unison | 0 |
+| `m2` | Minor 2nd | 1 |
+| `M2` | Major 2nd | 2 |
+| `m3` | Minor 3rd | 3 |
+| `M3` | Major 3rd | 4 |
+| `p4` | Perfect 4th | 5 |
+| `tt` | Tritone | 6 |
+| `p5` | Perfect 5th | 7 |
+| `m6` | Minor 6th | 8 |
+| `M6` | Major 6th | 9 |
+| `m7` | Minor 7th | 10 |
+| `M7` | Major 7th | 11 |
+| `p8` | Octave | 12 |
 
-3. **Algorithms** (`algorithms/*.ts`)
-Pure logic for generating sessions (difficulty, time blocks, task selection).
+The non-tritone intervals are organized into eight families:
 
-4. **Lib** (`lib/*.ts`)
-Shared helpers: DB client, auth, validators, API response formatting.
+- Unison: `p1`
+- 2nds: `m2`, `M2`
+- 3rds: `m3`, `M3`
+- 4th: `p4`
+- 5th: `p5`
+- 6ths: `m6`, `M6`
+- 7ths: `m7`, `M7`
+- Octave: `p8`
 
-5. **Prisma** (`prisma/*`)
-Schema, migrations, seed data.
+The four opposite/forbidden family relationships are:
 
-## File Responsibilities
+- Unison + octave
+- 2nds + 7ths
+- 3rds + 6ths
+- 4th + 5th
 
-### Prisma Layer
+These relationships drive the phase combinations in Levels 2–4. Tritone is handled separately as a wildcard in those levels.
 
-1. `prisma/schema.prisma`
-Database structure (User, Session, Task, SessionTask, Feedback).
+### Levels and phases
 
-2. `prisma/migrations/*/migration.sql`
-SQL history of DB changes.
+| Level | Phase-generation rule | Phases | Rounds per phase | Points per correct answer | Level maximum |
+| ---: | --- | ---: | ---: | ---: | ---: |
+| 1 | Focused two-answer contrast phases | 7 | 12 | 5 | 420 |
+| 2 | Every two-family combination except the four forbidden pairs | 24 | 12 | 5 | 1,440 |
+| 3 | One forbidden pair plus one of the six remaining families | 24 | 12 | 5 | 1,440 |
+| 4 | Four families containing exactly one forbidden relationship | 48 | 12 | 5 | 2,880 |
+| 5 | One phase containing all 13 intervals | 1 | 15 | 100 | 1,500 |
 
-3. `prisma/seed.ts`
-Seeds `Task` rows for realistic session generation.
+Level 1 phases are:
 
-4. `prisma.config.ts`
-Prisma config (schema path, datasource URL, seed command).
+1. Minor 2nd vs major 2nd
+2. Minor 3rd vs major 3rd
+3. Perfect 4th vs tritone
+4. Tritone vs perfect 5th
+5. Minor 6th vs major 6th
+6. Minor 7th vs major 7th
+7. Unison vs octave
 
-### Shared Lib Layer
+For Levels 2–4, tritone is always displayed in the answer bank and has a 20% chance of being selected for a round. When it is not selected, the program chooses uniformly from the other concrete intervals in that phase's answer bank. Level 1 and Level 5 choose uniformly from their complete answer banks.
 
-1. `lib/prisma.ts`
-Creates and exports shared Prisma client.
+Each Level 1–4 phase has a maximum of 60 points. The Level 5 phase has a maximum of 1,500 points.
 
-2. `lib/validators.ts`
-Zod schemas for all API payloads.
+### Round generation and playback
 
-3. `lib/auth.ts`
-JWT helpers:
-- `createToken`
-- `verifyToken`
-- `getUserFromRequest`
+1. Starting a phase loads and decodes all 49 bundled piano samples from MIDI 48 through 96 (`C3` through `C7`).
+2. The game selects an interval according to the current phase rules.
+3. It chooses a random lower MIDI note that leaves enough room for the upper note to remain within `C7`.
+4. The upper note is the lower note plus the interval's semitone distance, so all tested intervals are ascending and no larger than an octave.
+5. The exact same lower/upper note pair cannot occur in two consecutive rounds. Generation retries and then shifts the root as a deterministic fallback if necessary.
+6. Both notes play together when the round starts.
+7. The user can replay them together or play Note 1 and Note 2 separately.
 
-4. `lib/api-response.ts`
-Unified API response envelope:
-- success: `{ success: true, data }`
-- error: `{ success: false, error }`
+Web Audio schedules simultaneous notes with a small shared start delay and lowers the gain when two samples play together. Starting another playback stops the currently active sources.
 
-### Services Layer
+### Answer and score flow
 
-1. `services/user.service.ts`
-User business logic:
-- create user (hash password)
-- get user by email/id
-- update profile
-- return safe user shape (no password)
+1. The user selects one interval from the phase's answer bank.
+2. The answer locks immediately; a round cannot be rescored by clicking again.
+3. A correct answer turns green and adds the phase's point value.
+4. An incorrect choice turns red, awards zero points, and reveals the correct answer in green.
+5. The user explicitly advances to the next round.
+6. At the end of the phase, the client submits the number of correct answers rather than a client-calculated score.
+7. The server validates the level, stable phase ID, and allowed round count, then derives the score from the server-side curriculum.
 
-2. `services/session.service.ts`
-Session business logic:
-- generate + save session/tasks
-- complete session
-- upsert feedback
-- enforce ownership checks
+### Progress and persistence
 
-### Algorithm Layer
+`TheoryPhaseScore` stores:
 
-1. `algorithms/computeDifficulty.ts`
-Maps user level to difficulty.
+- User ID
+- Level number
+- Stable phase ID
+- Best score
+- Creation and update timestamps
 
-2. `algorithms/splitTimeBlocks.ts`
-Splits available time into 5-minute blocks.
+The combination of user, level, and phase is unique. Saving uses an upsert plus a conditional update, so a lower later attempt never replaces a higher score. A zero-point first attempt is still recorded as attempted.
 
-3. `algorithms/selectTasks.ts`
-Selects tasks by difficulty, tries category variation.
+The level score is not a separate database value. It is calculated by summing the best scores for every phase in that level. Progress responses also include each phase maximum, the level maximum, and attempted-phase counts.
 
-4. `algorithms/generatePracticeSession.ts`
-Orchestrates all algorithm steps into a session plan.
+### Local Theory Game mode
 
-### API Route Layer
+Set this before starting the development server:
 
-1. `app/api/auth/signup/route.ts`
-Signup endpoint.
+```env
+NEXT_PUBLIC_THEORY_GAME_LOCAL_PROGRESS=true
+```
 
-2. `app/api/auth/login/route.ts`
-Login endpoint.
+In this mode:
 
-3. `app/api/profile/route.ts`
-Protected profile get/update endpoint.
+- Progress is read from and written to `practiceArenaTheoryGameScores` in localStorage.
+- The score API and `TheoryPhaseScore` table are not used.
+- The protected shell allows `/theory-game` without a user JWT.
+- Other protected routes remain protected.
+- A visible banner identifies local test mode.
 
-4. `app/api/session/generate/route.ts`
-Protected session generation endpoint.
+Do not enable this variable in production if scores must be authenticated and persisted centrally.
 
-5. `app/api/session/complete/route.ts`
-Protected session completion endpoint.
+### Piano samples and licensing
 
-6. `app/api/test/route.ts`
-Simple DB connectivity test endpoint.
+The 49 MP3 files in `public/audio/piano` are C3–C7 Acoustic Grand Piano samples from the FluidR3 General MIDI soundfont, distributed by the MIDI.js Soundfonts project. Filenames were changed to MIDI note numbers for lookup.
 
-7. `app/api/chat/route.ts`
-Protected music coach endpoint.
+See:
 
-## User Model Notes
+- `public/audio/piano/ATTRIBUTION.md`
+- `public/audio/piano/LICENSE-FLUIDR3-CC-BY-3.0.txt`
+- `public/audio/piano/LICENSE-MIDIJS.txt`
 
-Current `User` key fields:
+## API Overview
 
-1. `email`
-2. `password` (hashed)
-3. `nickname` (optional, set after signup)
-4. `instrument` (currently always `guitar`)
-5. `level`
-6. `goals`
-7. `role` (`user` or `admin`, defaults to `user`)
+All endpoints use the response envelope:
 
-`nickname` is not unique and can be cleared (`null`) through profile update.
+```ts
+{ success: true, data: ... }
+{ success: false, error: { code: string, message: string } }
+```
 
-The first admin account is created or updated by `npm run prisma:seed` using `ADMIN_EMAIL` and `ADMIN_PASSWORD`.
+Regular protected endpoints require the user bearer token. Admin endpoints require the separately stored admin bearer token.
 
-## How Data Moves in a Request
+### Authentication and profile
 
-Example: `POST /api/session/generate`
+- `POST /api/auth/signup` — create a regular user and return `{ token, user }`.
+- `POST /api/auth/login` — validate a regular user and return `{ token, user }`.
+- `GET /api/profile` — return the authenticated user's safe profile.
+- `POST /api/profile` — update nickname, guitar instrument, level, or goals.
 
-1. Route receives request + bearer token.
-2. Route validates body with Zod.
-3. Route calls session service.
-4. Service loads user/tasks from DB.
-5. Service runs algorithm files.
-6. Service writes Session + SessionTask to DB.
-7. Route returns unified success response.
+### Practice sessions
 
-That same pattern is used across the backend.
+- `POST /api/session/generate` — generate and persist a practice plan.
+- `POST /api/session/complete` — mark valid assigned tasks complete and upsert feedback.
+- `GET /api/session/history` — return the user's sessions newest first with tasks and feedback.
+- `GET /api/session/stats` — return session count, average ratings, and task-completion rate.
+
+### Theory Game
+
+- `GET /api/theory-game/progress` — return all generated levels and phases merged with the user's stored best scores.
+- `POST /api/theory-game/scores` — accept `{ levelId, phaseId, correctAnswers }`, validate it, derive the score, and preserve the higher result.
+
+### Coach and Song Learner
+
+- `POST /api/chat` — answer music/practice questions using recent Practice Arena context and Gemini.
+- `POST /api/song-learner` — search SerpApi in parallel for an Ultimate Guitar match and a YouTube listening result, with Google-search fallback URLs.
+
+### Admin
+
+- `POST /api/admin/auth/login` — validate the JSON email/password payload, require a DB-backed user with `role = admin`, compare the password hash, and return `{ token, user }`. Invalid JSON or input returns `400`; invalid credentials return `401`.
+- `GET /api/admin/users` — list regular users newest first with derived session, assigned-task, completed-task, and feedback counts.
+- `GET /api/admin/users/[userId]` — return one regular user's profile, sessions newest first, tasks, completion state, and feedback. A missing or admin-role target returns `404`.
+- `GET /api/admin/tasks` — list reusable practice tasks newest first.
+- `POST /api/admin/tasks` — validate and create a reusable practice task, returning `201`. Invalid JSON or task data returns `400`.
+
+Except for the login endpoint, every admin endpoint requires `Authorization: Bearer <admin-token>`. Missing, invalid, expired, or non-admin credentials return `401`.
+
+### Utility
+
+- `GET /api/test` — basic database connectivity check.
+
+## Architecture
+
+### App Router and client UI
+
+- `app/(protected)` contains the regular-user shell and protected pages.
+- Interactive pages and hooks use client components because authentication, current-session state, Web Audio, and local progress rely on browser APIs.
+- `app/api/**/route.ts` contains HTTP boundaries: authentication, parsing, validation, service calls, and consistent responses.
+
+### Services
+
+- `user.service.ts` creates users, hashes passwords, reads profiles, and performs safe profile updates.
+- `session.service.ts` generates, saves, completes, lists, and aggregates practice sessions.
+- `chat.service.ts` builds Practice Arena context and calls Gemini with model fallbacks.
+- `admin.service.ts` handles admin user/task views and task creation.
+- `theory-game.service.ts` reads high scores, builds progress, and performs monotonic score updates.
+
+### Algorithms and shared libraries
+
+- `algorithms` contains pure practice-session and Theory Game tests plus the practice generator.
+- `lib/theory-game/definitions.ts` is the source of truth for intervals, families, levels, phases, round counts, and scoring.
+- `lib/theory-game/rounds.ts` generates bounded note pairs and sample paths.
+- `lib/theory-game/progress.ts` combines static curriculum data with stored scores.
+- `lib/client` contains token/session storage, API clients, local theory progress, and piano playback.
+- `lib/auth.ts`, `lib/validators.ts`, and `lib/api-response.ts` provide shared server-side authentication, validation, and response behavior.
+
+### Prisma data model
+
+- `User` stores identity, hashed password, profile data, role, and relations.
+- `Session` stores mood, available time, optional goal, assigned tasks, and optional feedback.
+- `Task` stores reusable guitar-practice content and metadata.
+- `SessionTask` records task assignment and completion.
+- `Feedback` stores one difficulty/focus rating pair per session.
+- `TheoryPhaseScore` stores per-user phase high scores.
+- `NotificationSettings`, `NotificationLog`, and reminder-related user fields define future configuration, unsubscribe state, and delivery logging. They are schema-only in this branch and do not trigger reminder processing.
+
+## Current Limitations
+
+- Regular and admin JWTs are stored in localStorage rather than secure HTTP-only cookies or server-backed sessions.
+- Protected-page routing is enforced in the client shell; API routes independently validate bearer tokens.
+- Admin management is read-only for users and session history; existing users, sessions, feedback, and tasks cannot be edited or deleted from the dashboard.
+- Reminder tables and fields exist, but scheduling, message generation, email delivery, unsubscribe handling, and settings controls are not implemented.
+- Practice-session content and profile validation are currently guitar-only.
+- The current-session page loads full session history and locates the localStorage session ID client-side; there is no dedicated current-session endpoint.
+- Theory Game rounds are ascending harmonic intervals from unison through one octave.
+- Theory Game persists only the best phase score, not every attempt or individual round result.
+- Theory rounds are generated in the browser. The server validates phase identity and score bounds but does not replay or cryptographically verify the generated rounds.
+- The AI Coach requires Gemini, and Song Learner requires SerpApi plus outbound network access.
