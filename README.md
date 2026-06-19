@@ -50,6 +50,10 @@ The application needs:
 - `SERPAPI_API_KEY` — enables Song Learner searches for Ultimate Guitar and YouTube results.
 - `ADMIN_EMAIL` — admin account used by the seed script; defaults to `admin@local`.
 - `ADMIN_PASSWORD` — admin password used by the seed script; defaults to `admin`.
+- `RESEND_API_KEY` — required when reminder settings leave dry-run mode and emails should be sent.
+- `EMAIL_FROM` — sender identity; defaults to `Practice Arena <onboarding@resend.dev>`.
+- `APP_BASE_URL` — public application origin used for unsubscribe links; defaults to `http://localhost:3000`.
+- `CRON_SECRET` — bearer secret required by `/api/cron/daily-reminders`.
 - `NEXT_PUBLIC_THEORY_GAME_LOCAL_PROGRESS=true` — runs Theory Game progress from browser localStorage instead of the database. This also allows only `/theory-game` through the protected shell without a JWT for isolated local testing.
 
 ### Prisma maintenance
@@ -66,6 +70,7 @@ npm install                 # install dependencies
 npm run dev                 # start the Next.js development server
 npm run lint                # run ESLint
 npm run test:algorithms     # run practice and theory algorithm tests
+npm run test:notifications  # run reminder-rule tests
 npm run build               # generate Prisma Client and create a production build
 npm run prisma:seed         # create or update the configured admin account
 ```
@@ -134,25 +139,28 @@ Admin authentication is separate from regular-user authentication:
 - Every protected admin API independently verifies the bearer token against the database and checks that the authenticated user still has the `admin` role. A token in localStorage alone does not grant API access.
 - A `401` response clears the stored admin token and redirects the browser to `/admin/login`.
 
-The dashboard has three areas:
+The dashboard has four areas:
 
 1. **Users** loads regular users and reusable tasks in parallel, then selects the newest user by default. Each user summary derives session, assigned-task, completed-task, and feedback counts from saved sessions. Selecting a user loads their profile, goals, sessions newest first, assigned tasks, completion state, and difficulty/focus feedback.
 2. **Task inventory** lists reusable tasks newest first. These tasks form the pool used by practice-session generation.
 3. **Add task** creates a validated reusable task. Name, difficulty, category, duration, and instrument are stored alongside optional description, key, BPM, tablature, chords, scale, song name, and artist name. Duration must be 1–240 minutes and an optional BPM must be 1–300.
+4. **Email reminders** reads and updates global reminder settings and can generate or send a test reminder to the authenticated admin account.
 
 The current admin interface can inspect data and add tasks. It does not edit or delete users, sessions, feedback, or existing tasks.
 
-### Reminder data model (not operational)
+### Daily email reminders
 
-The Prisma schema contains data structures for a future daily-email reminder system, but no reminder workflow currently runs:
+Reminder processing is implemented but disabled and in dry-run mode by default:
 
-- `User.emailRemindersEnabled` defaults to `true` and represents a future per-user preference.
-- `User.emailUnsubscribedAt` can record when a user unsubscribes.
-- `User.emailUnsubscribeToken` is nullable and unique so a future unsubscribe link can identify one user without exposing their ID.
-- `NotificationSettings` is shaped as global configuration. Its default ID is `global`; reminders default to disabled, all seven day numbers (`0,1,2,3,4,5,6`), at most 100 users per run, dry-run mode enabled, AI and fallback generation enabled, and the subject template `Your Practice Arena reminder`.
-- `NotificationLog` can record one result per user and send date. Its status is `skipped`, `generated`, `sent`, or `failed`; optional fields can store the provider message ID, subject, body preview, or error. It also stores creation time, relates back to `User`, enforces the user/date uniqueness constraint, and indexes send date and status.
+- Reading settings creates the singleton `NotificationSettings` row with ID `global` when it does not exist. Admins can control enabled days, the 1–500 user batch limit, dry-run mode, AI generation, deterministic fallback generation, and the subject template.
+- Vercel Cron calls `/api/cron/daily-reminders` every day at 08:00 UTC. The endpoint requires `Authorization: Bearer <CRON_SECRET>` and returns a considered/generated/sent/skipped/failed summary.
+- A run exits without processing when reminders are disabled or the current UTC weekday is inactive. Otherwise it selects the oldest eligible regular users who remain subscribed and have no log for that UTC send date.
+- Gemini can create reminder content from the user's profile, recent sessions, and statistics. If AI generation is disabled or fails, deterministic text is used when fallback generation is enabled.
+- Dry-run mode generates content and records a `skipped` log without contacting Resend. Live mode requires `RESEND_API_KEY`, sends through Resend, and records provider IDs or failures.
+- Sending creates a unique unsubscribe token when needed. The public unsubscribe endpoint disables reminders and records the unsubscribe timestamp.
+- The admin test endpoint targets the authenticated admin email. In dry-run mode it returns a subject and preview; in live mode it sends a `[Test]` message.
 
-These schema defaults do not create a `NotificationSettings` row and do not send email. This branch has no reminder scheduler, cron route, email provider integration, message-generation service, unsubscribe endpoint, admin reminder controls, or user reminder controls.
+`NotificationLog` enforces one record per user and UTC send date and stores status (`skipped`, `generated`, `sent`, or `failed`), subject, body preview, provider message ID, error, and creation time.
 
 ## Music Theory Interval Game
 
@@ -344,8 +352,16 @@ Regular protected endpoints require the user bearer token. Admin endpoints requi
 - `GET /api/admin/users/[userId]` — return one regular user's profile, sessions newest first, tasks, completion state, and feedback. A missing or admin-role target returns `404`.
 - `GET /api/admin/tasks` — list reusable practice tasks newest first.
 - `POST /api/admin/tasks` — validate and create a reusable practice task, returning `201`. Invalid JSON or task data returns `400`.
+- `GET /api/admin/notifications` — read global reminder settings, creating the default singleton row when necessary.
+- `POST /api/admin/notifications` — validate and update global reminder settings.
+- `POST /api/admin/notifications/test` — generate a dry-run preview or send a live test reminder to the authenticated admin.
 
 Except for the login endpoint, every admin endpoint requires `Authorization: Bearer <admin-token>`. Missing, invalid, expired, or non-admin credentials return `401`.
+
+### Daily reminders
+
+- `GET /api/cron/daily-reminders` — run the reminder batch after validating `Authorization: Bearer <CRON_SECRET>`.
+- `GET /api/notifications/unsubscribe?token=...` — disable reminders for the user identified by a valid unsubscribe token and return a small HTML confirmation page.
 
 ### Utility
 
@@ -365,6 +381,7 @@ Except for the login endpoint, every admin endpoint requires `Authorization: Bea
 - `session.service.ts` generates, saves, completes, lists, and aggregates practice sessions.
 - `chat.service.ts` builds Practice Arena context and calls Gemini with model fallbacks.
 - `admin.service.ts` handles admin user/task views and task creation.
+- `notification.service.ts` manages settings, eligibility, content generation, Resend delivery, logging, tests, and unsubscribe state.
 - `theory-game.service.ts` reads high scores, builds progress, and performs monotonic score updates.
 
 ### Algorithms and shared libraries
@@ -384,14 +401,14 @@ Except for the login endpoint, every admin endpoint requires `Authorization: Bea
 - `SessionTask` records task assignment and completion.
 - `Feedback` stores one difficulty/focus rating pair per session.
 - `TheoryPhaseScore` stores per-user phase high scores.
-- `NotificationSettings`, `NotificationLog`, and reminder-related user fields define future configuration, unsubscribe state, and delivery logging. They are schema-only in this branch and do not trigger reminder processing.
+- `NotificationSettings`, `NotificationLog`, and reminder-related user fields store operational reminder configuration, unsubscribe state, and per-day delivery results.
 
 ## Current Limitations
 
 - Regular and admin JWTs are stored in localStorage rather than secure HTTP-only cookies or server-backed sessions.
 - Protected-page routing is enforced in the client shell; API routes independently validate bearer tokens.
 - Admin management is read-only for users and session history; existing users, sessions, feedback, and tasks cannot be edited or deleted from the dashboard.
-- Reminder tables and fields exist, but scheduling, message generation, email delivery, unsubscribe handling, and settings controls are not implemented.
+- Reminder delivery depends on Vercel Cron, a correct `CRON_SECRET`, and Resend configuration when dry-run mode is disabled.
 - Practice-session content and profile validation are currently guitar-only.
 - The current-session page loads full session history and locates the localStorage session ID client-side; there is no dedicated current-session endpoint.
 - Theory Game rounds are ascending harmonic intervals from unison through one octave.

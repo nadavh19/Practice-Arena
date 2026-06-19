@@ -132,6 +132,36 @@ export type AdminCreateTaskPayload = {
   artistName?: string | null;
 };
 
+export type NotificationSettings = {
+  id: string;
+  enabled: boolean;
+  activeDays: string;
+  maxUsersPerRun: number;
+  dryRun: boolean;
+  aiEnabled: boolean;
+  fallbackEnabled: boolean;
+  subjectTemplate: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type NotificationSettingsPayload = {
+  enabled: boolean;
+  activeDays: number[];
+  maxUsersPerRun: number;
+  dryRun: boolean;
+  aiEnabled: boolean;
+  fallbackEnabled: boolean;
+  subjectTemplate: string;
+};
+
+export type NotificationTestResponse = {
+  error?: string | null;
+  preview?: string;
+  sent: boolean;
+  subject?: string;
+};
+
 export type GenerateSessionResponse = {
   session: {
     id: string;

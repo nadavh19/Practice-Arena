@@ -6,6 +6,8 @@ type TokenPayload = {
   userId: string;
 };
 
+type AuthenticatedUser = Pick<User, "email" | "id" | "role">;
+
 function getJwtSecret() {
   return process.env.JWT_SECRET;
 }
@@ -57,7 +59,7 @@ export function verifyToken(token: string): TokenPayload | null {
   }
 }
 
-export async function getAuthenticatedUserFromRequest(request: Request): Promise<User | null> {
+export async function getAuthenticatedUserFromRequest(request: Request): Promise<AuthenticatedUser | null> {
   const token = extractBearerToken(request);
   if (!token) {
     return null;
@@ -72,17 +74,22 @@ export async function getAuthenticatedUserFromRequest(request: Request): Promise
     where: {
       id: payload.userId,
     },
+    select: {
+      email: true,
+      id: true,
+      role: true,
+    },
   });
 
   return user;
 }
 
-export async function getRegularUserFromRequest(request: Request): Promise<User | null> {
+export async function getRegularUserFromRequest(request: Request): Promise<AuthenticatedUser | null> {
   const user = await getAuthenticatedUserFromRequest(request);
   return user?.role === "user" ? user : null;
 }
 
-export async function getAdminFromRequest(request: Request): Promise<User | null> {
+export async function getAdminFromRequest(request: Request): Promise<AuthenticatedUser | null> {
   const user = await getAuthenticatedUserFromRequest(request);
   return user?.role === "admin" ? user : null;
 }
