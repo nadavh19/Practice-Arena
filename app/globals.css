@@ -89,7 +89,8 @@ button:disabled,
 .current-session-page-background,
 .history-page-background,
 .coach-page-background,
-.song-learner-page-background {
+.song-learner-page-background,
+.theory-game-page-background {
   position: relative;
   isolation: isolate;
   overflow: hidden;
@@ -102,7 +103,8 @@ button:disabled,
 .current-session-page-background::before,
 .history-page-background::before,
 .coach-page-background::before,
-.song-learner-page-background::before {
+.song-learner-page-background::before,
+.theory-game-page-background::before {
   position: fixed;
   inset: 0;
   z-index: -1;
@@ -161,6 +163,52 @@ button:disabled,
   opacity: 0.86;
 }
 
+.theory-game-page-background::before {
+  background:
+    radial-gradient(circle at 82% 15%, rgba(250, 204, 21, 0.2), transparent 24%),
+    linear-gradient(120deg, rgba(251, 250, 255, 0.9), rgba(237, 233, 254, 0.76) 45%, rgba(251, 250, 255, 0.96)),
+    url("/backgrounds/blue-equalizer-wave.png");
+  opacity: 0.92;
+}
+
+.theory-hero,
+.theory-stage {
+  background:
+    radial-gradient(circle at 80% 15%, rgba(250, 204, 21, 0.22), transparent 28%),
+    linear-gradient(135deg, #2e1065, #4c1d95 55%, #171326);
+}
+
+@keyframes theoryRise {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes theoryFeedback {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+.theory-game-reveal,
+.theory-level-card,
+.theory-phase-card {
+  animation: theoryRise 480ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.theory-feedback {
+  animation: theoryFeedback 280ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.theory-answer:focus-visible {
+  outline: 3px solid rgba(109, 40, 217, 0.25);
+  outline-offset: 2px;
+}
+
 .music-accent-panel {
   position: relative;
   isolation: isolate;
@@ -217,6 +265,13 @@ button:disabled,
 @media (prefers-reduced-motion: reduce) {
   .practice-task-reveal,
   .page-section-reveal {
+    animation: none;
+  }
+
+  .theory-game-reveal,
+  .theory-level-card,
+  .theory-phase-card,
+  .theory-feedback {
     animation: none;
   }
 }

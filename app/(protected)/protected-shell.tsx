@@ -19,6 +19,7 @@ const links = [
   { href: "/history", label: "History" },
   { href: "/coach", label: "Coach" },
   { href: "/song-learner", label: "Song Learner" },
+  { href: "/theory-game", label: "Theory Game" },
 ];
 
 function getPageBackgroundClass(pathname: string) {
@@ -46,6 +47,10 @@ function getPageBackgroundClass(pathname: string) {
     return "song-learner-page-background";
   }
 
+  if (pathname === "/theory-game") {
+    return "theory-game-page-background";
+  }
+
   return "protected-image-shell";
 }
 
@@ -63,14 +68,17 @@ export function ProtectedShell({ children }: ProtectedShellProps) {
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
   const token = useSyncExternalStore(subscribeToTokenChanges, getToken, () => null);
+  const isTheoryGameLocalTest =
+    pathname === "/theory-game" && process.env.NEXT_PUBLIC_THEORY_GAME_LOCAL_PROGRESS === "true";
+  const hasAccess = Boolean(token) || isTheoryGameLocalTest;
 
   useEffect(() => {
-    if (!token) {
+    if (!hasAccess) {
       router.replace("/auth");
     }
-  }, [router, token]);
+  }, [hasAccess, router]);
 
-  if (!token) {
+  if (!hasAccess) {
     return (
       <PageShell as="main" width="5xl" fullHeight className="flex items-center justify-center px-6 py-10">
         <InlineStatus message="Checking access..." variant="muted" />

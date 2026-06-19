@@ -44,73 +44,89 @@ model User {
   emailUnsubscribeToken String?   @unique
   createdAt             DateTime  @default(now())
 
-  sessions         Session[]
-  notificationLogs NotificationLog[]
+  sessions          Session[]
+  theoryPhaseScores TheoryPhaseScore[]
+  notificationLogs  NotificationLog[]
+}
+
+model TheoryPhaseScore {
+  id        String   @id @default(uuid())
+  userId    String
+  level     Int
+  phaseId   String
+  bestScore Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, level, phaseId])
+  @@index([userId])
 }
 
 model Session {
-  id            String        @id @default(uuid())
+  id            String   @id @default(uuid())
   userId        String
   mood          String
   availableTime Int
   goal          String?
-  createdAt     DateTime      @default(now())
+  createdAt     DateTime @default(now())
 
-  user          User          @relation(fields: [userId], references: [id])
-  tasks         SessionTask[]
-  feedback      Feedback?
+  user     User          @relation(fields: [userId], references: [id])
+  tasks    SessionTask[]
+  feedback Feedback?
 }
 
 model Task {
-  id           String        @id @default(uuid())
-  name         String
-  difficulty   String
-  duration     Int
-  category     TaskCategory
-  description  String?
-  instrument   String?       @default("guitar")
-  key          String?
-  bpm          Int?
-  tab          String?
-  chords       String?
-  scale        String?
-  songName     String?
-  artistName   String?
-  createdAt    DateTime      @default(now())
+  id          String       @id @default(uuid())
+  name        String
+  difficulty  String
+  duration    Int
+  category    TaskCategory
+  description String?
+  instrument  String?      @default("guitar")
+  key         String?
+  bpm         Int?
+  tab         String?
+  chords      String?
+  scale       String?
+  songName    String?
+  artistName  String?
+  createdAt   DateTime     @default(now())
 
   sessionTasks SessionTask[]
 }
 
 model SessionTask {
-  id        String   @id @default(uuid())
+  id        String  @id @default(uuid())
   sessionId String
   taskId    String
-  completed Boolean  @default(false)
+  completed Boolean @default(false)
 
-  session   Session  @relation(fields: [sessionId], references: [id])
-  task      Task     @relation(fields: [taskId], references: [id])
+  session Session @relation(fields: [sessionId], references: [id])
+  task    Task    @relation(fields: [taskId], references: [id])
 }
 
 model Feedback {
-  id               String   @id @default(uuid())
-  sessionId        String   @unique
+  id               String @id @default(uuid())
+  sessionId        String @unique
   difficultyRating Int
   focusRating      Int
 
-  session          Session  @relation(fields: [sessionId], references: [id])
+  session Session @relation(fields: [sessionId], references: [id])
 }
 
 model NotificationSettings {
-  id             String   @id @default("global")
-  enabled        Boolean  @default(false)
-  activeDays     String   @default("0,1,2,3,4,5,6")
-  maxUsersPerRun Int      @default(100)
-  dryRun         Boolean  @default(true)
-  aiEnabled      Boolean  @default(true)
-  fallbackEnabled Boolean @default(true)
-  subjectTemplate String  @default("Your Practice Arena reminder")
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id              String   @id @default("global")
+  enabled         Boolean  @default(false)
+  activeDays      String   @default("0,1,2,3,4,5,6")
+  maxUsersPerRun  Int      @default(100)
+  dryRun          Boolean  @default(true)
+  aiEnabled       Boolean  @default(true)
+  fallbackEnabled Boolean  @default(true)
+  subjectTemplate String   @default("Your Practice Arena reminder")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model NotificationLog {
@@ -124,7 +140,7 @@ model NotificationLog {
   error             String?
   createdAt         DateTime           @default(now())
 
-  user              User               @relation(fields: [userId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
   @@unique([userId, sendDate])
   @@index([sendDate])
