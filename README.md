@@ -125,7 +125,14 @@ The protected shell is client-side. It reads `practiceArenaToken` from localStor
 - `selectTasks.ts` scores tasks using difficulty, mood, session/profile goals, recent feedback, and category variation.
 - `generatePracticeSession.ts` orchestrates the calculation and returns the selected tasks and planning metadata.
 
-Recent feedback can nudge later sessions easier or harder. Low focus can favor simpler categories, while an explicit session goal receives stronger priority than the saved profile goals.
+The profile level determines the initial target difficulty: beginner, intermediate, or advanced. Candidate tasks receive `+60` for an exact difficulty match, `+25` when they are one level away, and `-20` when they are two levels away.
+
+Mood changes category preference rather than the target difficulty itself:
+
+- Tired, stressed, anxious, low-energy, or unfocused moods add `+25` to chord, song-chord, and rhythm tasks and apply `-10` to other categories.
+- Focused, motivated, energetic, excited, confident, happy, or ready moods add `+25` to technique, scale, solo, and riff tasks.
+
+Because mood contributes to the complete task score, it can indirectly make a differently ranked task win, but it never explicitly raises or lowers the difficulty level. Recent difficulty feedback is the only current difficulty adjustment: an average rating of at least `4` shifts the effective target one level easier, while an average of at most `2` shifts it one level harder. An average focus rating of `2.5` or lower adds `+20` to the simple chord, song-chord, and rhythm categories without changing difficulty. An explicit session goal still receives stronger priority than saved profile goals.
 
 ## Admin Dashboard
 
