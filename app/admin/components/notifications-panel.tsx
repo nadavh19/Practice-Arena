@@ -38,16 +38,6 @@ export function NotificationsPanel({
     >
       <SurfaceCard className="rounded-[1.5rem] p-5">
         <PageHeading title="Notifications" description="Control daily AI practice reminders for regular users." />
-        <div className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
-          <p className="font-semibold">Email setup todo</p>
-          <ul className="mt-2 list-inside list-disc space-y-1 leading-6">
-            <li>Create a Resend API key and add `RESEND_API_KEY` to `.env`.</li>
-            <li>Set `EMAIL_FROM`, using `onboarding@resend.dev` for testing or a verified Resend domain for production.</li>
-            <li>Set `APP_BASE_URL` so unsubscribe links point to the correct app URL.</li>
-            <li>Set a long random `CRON_SECRET` and use the same value in Vercel.</li>
-            <li>Restart the dev server, keep dry run on first, then send a test email.</li>
-          </ul>
-        </div>
         <form className="mt-5 space-y-5" onSubmit={onSubmit}>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
             {[
