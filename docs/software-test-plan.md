@@ -91,14 +91,12 @@ The following items are out of scope for this testing cycle:
 
 - Production-scale load, stress, and performance testing.
 - Cross-browser and cross-device matrix testing beyond the selected local browser/environment.
-- Real live email delivery unless a valid Resend configuration is available.
 - External-provider correctness for Gemini, SerpApi, YouTube, Ultimate Guitar, or Resend.
 - Payment processing, because the application has no payment feature.
 - Instruments other than guitar, because current validation intentionally supports guitar only.
 - Full security penetration testing.
 - Database disaster recovery and backup restoration.
-- Editing or deleting existing users, sessions, feedback, or reusable tasks from the admin dashboard, because these capabilities are not currently implemented.
-
+- Editing or deleting existing users, sessions, feedback, or reusable tasks from the admin dashboard
 ## 5. Testing Strategy
 
 Testing will be performed in layers so that pure logic, service behavior, API boundaries, and complete user flows are all covered.
