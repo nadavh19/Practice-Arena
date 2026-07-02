@@ -23,8 +23,15 @@ export async function POST(request: Request) {
   }
 
   const result = await generateAndSaveSession(authUser.id, parsed.data);
-  if (!result) {
+  if (result.status === "user_not_found") {
     return apiError(404, { code: "USER_NOT_FOUND", message: "User not found" });
+  }
+
+  if (result.status === "no_available_tasks") {
+    return apiError(409, {
+      code: "NO_AVAILABLE_TASKS",
+      message: "No new practice tasks are available for this user.",
+    });
   }
 
   return apiSuccess(result, 201);

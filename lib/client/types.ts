@@ -163,9 +163,14 @@ export type NotificationTestResponse = {
 };
 
 export type GenerateSessionResponse = {
-  session: {
-    id: string;
+  generation: {
+    difficulty: UserLevel;
+    timeBlocks: number[];
+    totalBlockMinutes: number;
+    totalPlannedMinutes: number;
   };
+  session: SessionHistoryItem;
+  status: "success";
 };
 
 export type CoachChatMessage = {
