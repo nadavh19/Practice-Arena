@@ -7,7 +7,7 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "eslint",
-    "test:algorithms": "node --import tsx --test algorithms/*.test.ts",
+    "test:algorithms": "node --import tsx --test algorithms/*.test.ts services/*.test.ts",
     "test:notifications": "node --import tsx --test lib/*.test.ts",
     "prisma:seed": "tsx prisma/seed.ts"
   },

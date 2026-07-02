@@ -2,18 +2,52 @@ import { prisma } from "@/lib/prisma";
 import type { CompleteSessionInput, GenerateSessionInput } from "@/lib/validators";
 import { generatePracticeSession } from "@/algorithms/generatePracticeSession";
 
+type GenerateSessionDb = Pick<typeof prisma, "user" | "task" | "session">;
+
+export type GenerateAndSaveSessionResult =
+  | {
+      status: "success";
+      session: Awaited<ReturnType<typeof createSessionWithTasks>>;
+      generation: {
+        difficulty: string;
+        timeBlocks: number[];
+        totalBlockMinutes: number;
+        totalPlannedMinutes: number;
+      };
+    }
+  | { status: "user_not_found" }
+  | { status: "no_available_tasks" };
+
 export async function generateAndSaveSession(userId: string, input: GenerateSessionInput) {
-  const user = await prisma.user.findUnique({
+  return generateAndSaveSessionWithClient(prisma, userId, input);
+}
+
+export async function generateAndSaveSessionWithClient(
+  db: GenerateSessionDb,
+  userId: string,
+  input: GenerateSessionInput,
+) {
+  const user = await db.user.findUnique({
     where: { id: userId },
     select: { id: true, level: true, goals: true },
   });
 
   if (!user) {
-    return null;
+    return { status: "user_not_found" } satisfies GenerateAndSaveSessionResult;
   }
 
   const [tasks, recentFeedbackSessions] = await Promise.all([
-    prisma.task.findMany({
+    db.task.findMany({
+      where: {
+        sessionTasks: {
+          none: {
+            completed: true,
+            session: {
+              userId,
+            },
+          },
+        },
+      },
       select: {
         id: true,
         name: true,
@@ -31,7 +65,7 @@ export async function generateAndSaveSession(userId: string, input: GenerateSess
         artistName: true,
       },
     }),
-    prisma.session.findMany({
+    db.session.findMany({
       where: {
         userId,
         feedback: {
@@ -50,6 +84,10 @@ export async function generateAndSaveSession(userId: string, input: GenerateSess
       },
     }),
   ]);
+
+  if (tasks.length === 0) {
+    return { status: "no_available_tasks" } satisfies GenerateAndSaveSessionResult;
+  }
 
   const feedbackRatings = recentFeedbackSessions
     .map((session) => session.feedback)
@@ -76,14 +114,38 @@ export async function generateAndSaveSession(userId: string, input: GenerateSess
     tasks,
   });
 
-  const session = await prisma.session.create({
+  if (generated.selectedTasks.length === 0) {
+    return { status: "no_available_tasks" } satisfies GenerateAndSaveSessionResult;
+  }
+
+  const session = await createSessionWithTasks(db, userId, input, generated.selectedTasks);
+
+  return {
+    status: "success",
+    session,
+    generation: {
+      difficulty: generated.difficulty,
+      timeBlocks: generated.timeBlocks,
+      totalBlockMinutes: generated.totalBlockMinutes,
+      totalPlannedMinutes: generated.totalPlannedMinutes,
+    },
+  } satisfies GenerateAndSaveSessionResult;
+}
+
+function createSessionWithTasks(
+  db: GenerateSessionDb,
+  userId: string,
+  input: GenerateSessionInput,
+  selectedTasks: Array<{ id: string }>,
+) {
+  return db.session.create({
     data: {
       userId,
       mood: input.mood,
       availableTime: input.availableTime,
       goal: input.goal ?? null,
       tasks: {
-        create: generated.selectedTasks.map((task) => ({
+        create: selectedTasks.map((task) => ({
           task: {
             connect: { id: task.id },
           },
@@ -99,16 +161,6 @@ export async function generateAndSaveSession(userId: string, input: GenerateSess
       feedback: true,
     },
   });
-
-  return {
-    session,
-    generation: {
-      difficulty: generated.difficulty,
-      timeBlocks: generated.timeBlocks,
-      totalBlockMinutes: generated.totalBlockMinutes,
-      totalPlannedMinutes: generated.totalPlannedMinutes,
-    },
-  };
 }
 
 export async function completeSession(userId: string, input: CompleteSessionInput) {
