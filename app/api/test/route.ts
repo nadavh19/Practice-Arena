@@ -2,6 +2,10 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
 export async function GET() {
-  const users = await prisma.user.findMany();
-  return NextResponse.json(users);
+  try {
+    await prisma.$queryRaw`SELECT 1`;
+    return NextResponse.json({ status: "ok" });
+  } catch {
+    return NextResponse.json({ status: "unavailable" }, { status: 503 });
+  }
 }
